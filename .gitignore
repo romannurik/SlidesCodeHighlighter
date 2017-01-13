@@ -1,0 +1,10 @@
+_sandbox
+.sass-cache
+.tmp
+node_modules
+bower_components
+dist
+.DS_Store
+.publish
+*.sublime-workspace
+*~

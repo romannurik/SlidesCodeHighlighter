@@ -1,0 +1,122 @@
+/*
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'material-colors';
+
+@mixin make-code-theme(
+    $name,
+    $bgColor,
+    $textColor,
+    $stringAndValueColor,
+    $keywordTagColor,
+    $commentColor,
+    $typeColor,
+    $numberColor,
+    $punctuationColor,
+    $declarationColor) {
+  [data-theme="#{$name}"] {
+    #output::after {
+      // to avoid background color being copied to clipboard
+      background-color: $bgColor;
+    }
+    .pln { color: $textColor; }  // plain text
+    .clo { color: $punctuationColor; } // punctuation, lisp open bracket, lisp close bracket
+    //.fun { color: $functionColor; }  // a function name (seems to be unused)
+    .str,
+    .atv { color: $stringAndValueColor; }  // string content and attribute value
+    .kwd,
+    .tag { color: $keywordTagColor;  }  // a keyword or tag
+    .com { color: $commentColor; }  // a comment
+    .typ,
+    .atn { color: $typeColor; }  // a type name or xq variable
+    .lit { color: $numberColor; }  // a literal value
+    .pun,
+    .opn,
+    .dec,
+    .var { color: $declarationColor; }  // a declaration like doctype, and variable name
+  }
+}
+
+
+@include make-code-theme(
+    $name: 'light',
+    $bgColor: material-color('grey', '100'),
+    $textColor: material-color('blue-grey', '800'),
+    $punctuationColor: material-color('blue-grey', '800'),
+    $stringAndValueColor: material-color('green', '700'),
+    $keywordTagColor: material-color('indigo', '500'),
+    $commentColor: material-color('pink', '600'),
+    $typeColor: material-color('purple', '500'),
+    $numberColor: #c53929, // g-red 700
+    $declarationColor: material-color('indigo', '500')
+    );
+
+
+@include make-code-theme(
+    $name: 'light-alt',
+    $bgColor: #eee,
+    $textColor: #000,
+    $punctuationColor: #a3a3a3,
+    $stringAndValueColor: #0f9d58,
+    $keywordTagColor: #4285f4,
+    $commentColor: #999,
+    $typeColor: #673ab7,
+    $numberColor: #db4437,
+    // $attrNameColor: #e91e63,
+    $declarationColor: #e67c73
+    );
+
+
+@include make-code-theme(
+    $name: 'dark',
+    $bgColor: material-color('grey', '900'),
+    $textColor: material-color('blue-grey', '50'),
+    $punctuationColor: material-color('blue-grey', '50'),
+    $stringAndValueColor: material-color('light-green', '400'),
+    $keywordTagColor: material-color('cyan', '300'),
+    $commentColor: material-color('pink', '300'),
+    $typeColor: material-color('purple', '200'),
+    $numberColor: material-color('yellow', '700'),
+    $declarationColor: material-color('yellow', '700')
+    );
+
+
+@include make-code-theme(
+    $name: 'dark-alt',
+    $bgColor: #000,
+    $textColor: #fff,
+    $punctuationColor: #a3a3a3,
+    $stringAndValueColor: #57bb8a,
+    $keywordTagColor: #7baaf7,
+    $commentColor: #aaa,
+    $typeColor: #ff8a65, // alt #f06292
+    $numberColor: #f4b400,
+    $declarationColor: #e67c73
+    );
+
+
+@include make-code-theme(
+    $name: 'design-dark',
+    $bgColor: #263238,
+    $textColor: #fff,
+    $punctuationColor: #90a4ae,
+    $stringAndValueColor: #00bfa4,
+    $keywordTagColor: #26c6da,
+    $commentColor: #607d8b,
+    $typeColor: #ff8a80,
+    $numberColor: #ffbc00,
+    $declarationColor: #90a4ae
+    );

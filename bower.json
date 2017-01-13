@@ -1,0 +1,17 @@
+{
+  "name": "slides-code-highlighter",
+  "license": "Apache-2.0",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ace-builds": "^1.2.6",
+    "google-code-prettify": "^1.0.5",
+    "jquery": "^3.1.1"
+  }
+}

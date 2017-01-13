@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500|Roboto+Mono:400,700">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <div class="edit-area">
+    <div class="title-bar">Paste code below</div>
+    <div class="toolbar">
+      <label>
+        Language
+        <select id="lang">
+          <option value="--">(auto detect language)</option>
+          <option value="c++">C++</option>
+          <option value="java">Java</option>
+          <option value="javascript">JavaScript</option>
+          <option value="xml">XML</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="python">Python</option>
+        </select>
+      </label>
+    </div>
+    <div id="editor"></div>
+    <div class="messages"></div>
+  </div>
+  <div class="output-area">
+    <div class="title-bar">Copy the formatted code below</div>
+    <div class="toolbar">
+      <label>
+        Theme
+        <select id="theme">
+          <option value="light">Light</option>
+          <option value="light-alt">Light (alternate)</option>
+          <option value="dark">Dark</option>
+          <option value="dark-alt">Dark (alternate)</option>
+          <option value="design-dark">Dark (design)</option>
+        </select>
+      </label>
+
+      <label>
+        Type size
+        <input id="type-size" value="40">
+      </label>
+    </div>
+    <div id="output"></div>
+    <div class="messages">
+      <div class="message message-info">
+        For best results, copy from Safari with Keynote decks and from Chrome
+        with Google Slides decks.
+      </div>
+    </div>
+  </div>
+
+  <script src="jquery.min.js"></script>
+  <script src="prettify.min.js"></script>
+  <script src="ace.js"></script>
+  <script src="index.js"></script>
+
+</body>
+</html>

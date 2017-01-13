@@ -1,0 +1,28 @@
+{
+  "name": "slides-code-highlighter",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "browser-sync": "^2.10.0",
+    "del": "^2.1.0",
+    "gulp": "^3.9.0",
+    "gulp-cache": "^0.4.0",
+    "gulp-changed": "^1.0.0",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-if": "^2.0.0",
+    "gulp-ignore": "^2.0.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-size": "^2.0.0",
+    "gulp-util": "^3.0.7",
+    "node-util": "0.0.1",
+    "path": "^0.12.7",
+    "run-sequence": "^1.1.5"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "private": true,
+  "scripts": {
+    "postinstall": "bower install"
+  }
+}
