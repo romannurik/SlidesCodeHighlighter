@@ -4,3 +4,28 @@ A little web app that helps you copy+paste syntax-highlighted code into slide de
 **[Open the app](https://romannurik.github.io/SlidesCodeHighlighter/)**
 
 ![Screenshot](https://raw.githubusercontent.com/romannurik/SlidesCodeHighlighter/master/screenshot.png)
+
+
+## Build instructions
+
+If you want to contribute, you can build and serve the web app locally as follows:
+
+  1. First install [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/).
+
+  2. Install `bower` and `gulp`:
+
+    ```
+    $ npm install -g bower gulp
+    ```
+
+  3. Clone the repository and in the root directory, run:
+
+    ```
+    $ npm install
+    ```
+
+  4. To build and serve the web app locally, run:
+
+    ```
+    $ gulp serve
+    ```
