@@ -119,7 +119,8 @@ function updateOutputArea() {
       .addClass('prettyprint')
       .css({
         'font-size': `${config.typeSize}px`,
-        'line-height': `${config.typeSize * 1.5}px`
+        'line-height': `${config.typeSize * 1.5}px`,
+        'background': 'transparent'
       })
       .text(cleanupCode(config.code))
       .appendTo($output);
