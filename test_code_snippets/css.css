@@ -1,0 +1,11 @@
+html {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  /* comment */
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+.foo #foo[foo="foo"] > * > div + div {
+  /* a comment */
+  color: blue;
+}
