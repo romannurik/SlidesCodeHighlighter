@@ -7,6 +7,7 @@
     "gulp": "^3.9.0",
     "gulp-cache": "^0.4.0",
     "gulp-changed": "^1.0.0",
+    "gulp-concat": "^2.6.1",
     "gulp-gh-pages": "^0.5.4",
     "gulp-if": "^2.0.0",
     "gulp-ignore": "^2.0.1",

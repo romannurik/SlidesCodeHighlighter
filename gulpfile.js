@@ -27,6 +27,15 @@ function errorHandler(error) {
 }
 
 
+gulp.task('prettify-languages', cb => {
+  return gulp.src([
+    'bower_components/google-code-prettify/src/lang*.js',
+  ])
+      .pipe($.concat('prettify-languages.js'))
+      .pipe(gulp.dest('dist'));
+});
+
+
 gulp.task('copy', cb => {
   return gulp.src([
     'index.html',
@@ -76,7 +85,7 @@ gulp.task('serve', ['build'], () => {
 
 
 gulp.task('build', cb => {
-  runSequence(['styles'], ['copy'], cb);
+  runSequence(['styles'], ['prettify-languages', 'copy'], cb);
 });
 
 
