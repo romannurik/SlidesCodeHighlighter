@@ -120,7 +120,7 @@ function updateOutputArea() {
       .css({
         'font-size': `${config.typeSize}px`,
         'line-height': `${config.typeSize * 1.5}px`,
-        'background' : 'transparent'
+        'background': 'transparent'
       })
       .text(cleanupCode(config.code))
       .appendTo($output);
