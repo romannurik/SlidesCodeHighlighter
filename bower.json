@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "ace-builds": "^1.2.6",
-    "google-code-prettify": "git@github.com:google/code-prettify.git",
+    "google-code-prettify": "https://github.com/google/code-prettify.git",
     "jquery": "^3.1.1"
   }
 }

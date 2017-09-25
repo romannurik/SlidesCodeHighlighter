@@ -43,7 +43,7 @@ gulp.task('copy', cb => {
 
     // libs
     'bower_components/jquery/dist/jquery.min.js',
-    'bower_components/google-code-prettify/bin/prettify.min.js',
+    'bower_components/google-code-prettify/src/prettify.js',
     'bower_components/ace-builds/src-min-noconflict/ace.js',
     'bower_components/ace-builds/src-min-noconflict/mode-text.js',
     'bower_components/ace-builds/src-min-noconflict/theme-chrome.js',
