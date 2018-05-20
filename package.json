@@ -25,5 +25,8 @@
   "private": true,
   "scripts": {
     "postinstall": "bower install"
+  },
+  "dependencies": {
+    "workbox-build": "^3.2.0"
   }
 }
