@@ -19,7 +19,6 @@
       "sizes": "512x512"
     }
   ],
-  "scope": "index.html",
   "display": "standalone",
   "start_url": "/SlidesCodeHighlighter/",
   "theme_color": "#607d8b",
