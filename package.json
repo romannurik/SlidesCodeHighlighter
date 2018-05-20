@@ -8,7 +8,6 @@
     "gulp-cache": "^1.0.2",
     "gulp-changed": "^3.2.0",
     "gulp-concat": "^2.6.1",
-    "gulp-gh-pages": "^0.5.4",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
@@ -27,6 +26,7 @@
     "postinstall": "bower install"
   },
   "dependencies": {
+    "gh-pages": "^1.1.0",
     "workbox-build": "^3.2.0"
   }
 }

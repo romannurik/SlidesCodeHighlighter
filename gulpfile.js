@@ -21,6 +21,8 @@ const runSequence = require('run-sequence');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const workbox = require('workbox-build');
+const ghpages = require('gh-pages');
+const path = require('path');
 
 function errorHandler(error) {
   console.error(error.stack);
@@ -117,9 +119,8 @@ gulp.task('build', cb => {
 });
 
 
-gulp.task('deploy', () => {
-  return gulp.src('dist/**/*', {dot: true})
-      .pipe($.ghPages());
+gulp.task('deploy', cb => {
+  ghpages.publish(path.join(process.cwd(), 'dist'), cb);
 });
 
 
