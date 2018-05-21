@@ -2,7 +2,7 @@
   "name": "slides-code-highlighter",
   "license": "Apache-2.0",
   "devDependencies": {
-    "browser-sync": "^2.23.6",
+    "browser-sync": "^2.24.4",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-cache": "^1.0.2",
