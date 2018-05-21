@@ -20,6 +20,9 @@ const runSequence = require('run-sequence');
 
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
+const workbox = require('workbox-build');
+const ghpages = require('gh-pages');
+const path = require('path');
 
 function errorHandler(error) {
   console.error(error.stack);
@@ -36,10 +39,34 @@ gulp.task('prettify-languages', cb => {
 });
 
 
+gulp.task('generate-service-worker', () => {
+  const dist = './dist/';
+  return workbox.generateSW({
+    globDirectory: dist,
+    globPatterns: [
+      '**/*.{html,js,css}'
+    ],
+    globIgnores: ['**/sw.js'],
+    swDest: `${dist}/sw.js`,
+    clientsClaim: true,
+    skipWaiting: true
+  }).then(({warnings}) => {
+    // In case there are any warnings from workbox-build, log them.
+    for (const warning of warnings) {
+      console.warn(warning);
+    }
+    console.info('Service worker generation completed.');
+  }).catch((error) => {
+    console.warn('Service worker generation failed:', error);
+  });
+});
+
+
 gulp.task('copy', cb => {
   return gulp.src([
     'index.html',
     'index.js',
+    'manifest.json',
 
     // libs
     'bower_components/jquery/dist/jquery.min.js',
@@ -47,6 +74,9 @@ gulp.task('copy', cb => {
     'bower_components/ace-builds/src-min-noconflict/ace.js',
     'bower_components/ace-builds/src-min-noconflict/mode-text.js',
     'bower_components/ace-builds/src-min-noconflict/theme-chrome.js',
+
+    // icons
+    'images/**/*.png'
   ])
       .pipe(gulp.dest('dist'));
 });
@@ -85,13 +115,12 @@ gulp.task('serve', ['build'], () => {
 
 
 gulp.task('build', cb => {
-  runSequence(['styles'], ['prettify-languages', 'copy'], cb);
+  runSequence(['styles'], ['prettify-languages', 'copy'], 'generate-service-worker', cb);
 });
 
 
-gulp.task('deploy', () => {
-  return gulp.src('dist/**/*', {dot: true})
-      .pipe($.ghPages());
+gulp.task('deploy', cb => {
+  ghpages.publish(path.join(process.cwd(), 'dist'), cb);
 });
 
 
