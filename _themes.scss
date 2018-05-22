@@ -134,3 +134,17 @@
     $numberColor: #ffd500,
     $declarationColor: #90a4ae
     );
+
+
+@include make-code-theme(
+    $name: 'io18',
+    $bgColor: #414141,
+    $textColor: #fff,
+    $punctuationColor: #90a4ae,
+    $stringAndValueColor: #536dfe,
+    $keywordTagColor: #1ce8b5,
+    $commentColor: #aaaaaa,
+    $typeColor: #ff6C00,
+    $numberColor: #ffd500,
+    $declarationColor: #a3a3a3
+    );
