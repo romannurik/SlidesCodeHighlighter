@@ -34,17 +34,23 @@ setupOutputArea();
 updateOutputArea();
 installServiceWorker();
 
+
 function setupEditor() {
   let editor = ace.edit($editor.get(0));
   editor.$blockScrolling = Infinity;
   editor.setValue(config.code, -1);
   editor.setTheme('ace/theme/chrome');
   editor.getSession().setMode('ace/mode/text');
+  editor.setOptions({
+    fontFamily: 'Roboto Mono',
+    fontSize: '11pt',
+  });
   editor.on('change', () => {
     localStorage.highlighterCode = config.code = editor.getValue();
     updateOutputArea();
   });
 }
+
 
 function setupOutputArea() {
   // select all on click
@@ -59,6 +65,7 @@ function setupOutputArea() {
   // re-layout on window resize
   $(window).on('resize', () => updateOutputArea());
 }
+
 
 function setupEditorToolbar() {
   let $theme = $('#theme');
@@ -79,6 +86,7 @@ function setupEditorToolbar() {
       });
 }
 
+
 function setupOutputToolbar() {
   let $typeSize = $('#type-size');
 
@@ -93,7 +101,12 @@ function setupOutputToolbar() {
 
   $typeSize
       .val(config.typeSize)
-      .on('input', () => setTypeSize_(parseInt($typeSize.val(), 10)))
+      .on('input', () => {
+        let val = parseInt($typeSize.val(), 10);
+        if (!isNaN(val) && val > 8) {
+          setTypeSize_(val);
+        }
+      })
       .on('keydown', ev => {
         if (!ev.shiftKey) {
           if (ev.keyCode == 38 || ev.keyCode == 40) {
@@ -101,9 +114,9 @@ function setupOutputToolbar() {
             ev.preventDefault();
           }
         }
-      });
+      })
+      .on('blur', ev => setTypeSize_(config.typeSize));
 }
-
 
 
 function updateOutputArea() {
@@ -234,6 +247,7 @@ function measureNaturalPreWidth(pre) {
   $preClone.remove();
   return naturalWidth;
 }
+
 
 function installServiceWorker() {
   if ('serviceWorker' in navigator) {

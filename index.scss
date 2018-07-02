@@ -97,9 +97,33 @@ body {
     margin-left: 8px;
     border-radius: 2px;
 
-    &:active,
     &:focus {
       background-color: #fff;
+      color: material-color('blue-grey', '900');
+    }
+  }
+
+  .select-wrapper {
+    position: relative;
+
+    select {
+      padding-right: 24px;
+    }
+
+    &::after {
+      position: absolute;
+      content: '\25BC';
+      font-family: Roboto;
+      color: #fff;
+      right: 8px;
+      font-size: 8px;
+      line-height: 8px;
+      top: calc(50% + 1px);
+      transform: translateY(-50%) scaleX(1.3);
+      pointer-events: none;
+    }
+
+    &:focus-within::after {
       color: material-color('blue-grey', '900');
     }
   }

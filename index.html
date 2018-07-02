@@ -13,23 +13,26 @@
     <div class="toolbar">
       <label>
         Language
-        <select id="lang">
-          <option value="--">(auto detect language)</option>
-          <option value="c++">C++</option>
-          <option value="css">CSS</option>
-          <option value="dart">Dart</option>
-          <option value="go">Go</option>
-          <option value="html">HTML</option>
-          <option value="java">Java</option>
-          <option value="kotlin">Kotlin</option>
-          <option value="javascript">JavaScript</option>
-          <option value="lisp">Lisp</option>
-          <option value="lua">Lua</option>
-          <option value="python">Python</option>
-          <option value="sql">SQL</option>
-          <option value="xml">XML</option>
-          <option value="yaml">Yaml</option>
-        </select>
+        <div class="select-wrapper">
+          <select id="lang">
+            <option value="--">(auto detect language)</option>
+            <option value="c++">C++</option>
+            <option value="css">CSS</option>
+            <option value="dart">Dart</option>
+            <option value="go">Go</option>
+            <option value="html">HTML</option>
+            <option value="java">Java</option>
+            <option value="kotlin">Kotlin</option>
+            <option value="javascript">JavaScript</option>
+            <option value="lisp">Lisp</option>
+            <option value="lua">Lua</option>
+            <option value="python">Python</option>
+            <option value="ruby">Ruby</option>
+            <option value="sql">SQL</option>
+            <option value="xml">XML</option>
+            <option value="yaml">Yaml</option>
+          </select>
+        </div>
       </label>
     </div>
     <div id="editor"></div>
@@ -40,14 +43,16 @@
     <div class="toolbar">
       <label>
         Theme
-        <select id="theme">
-          <option value="light">Light</option>
-          <option value="light-alt">Light (alternate)</option>
-          <option value="dark">Dark</option>
-          <option value="dark-alt">Dark (alternate)</option>
-          <option value="design-dark">Dark (design)</option>
-          <option value="io17">#io17</option>
-        </select>
+        <div class="select-wrapper">
+          <select id="theme">
+            <option value="light">Light</option>
+            <option value="light-alt">Light (alternate)</option>
+            <option value="dark">Dark</option>
+            <option value="dark-alt">Dark (alternate)</option>
+            <option value="design-dark">Dark (design)</option>
+            <option value="io17">#io17</option>
+          </select>
+        </div>
       </label>
 
       <label>
