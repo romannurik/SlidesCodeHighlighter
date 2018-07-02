@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {setTheme, DEFAULT_THEMES, THEME_PROPERTIES} from './themes.js';
+
 const WARN_LINES = 15;
 const WARN_LINE_LENGTH = 80;
 
@@ -24,7 +26,8 @@ let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
   lang: localStorage.highlighterLang || '--',
-  typeSize: Number(localStorage.highlighterTypeSize || '40')
+  typeSize: Number(localStorage.highlighterTypeSize || '40'),
+  customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
 
 setupEditorToolbar();
@@ -32,6 +35,7 @@ setupEditor();
 setupOutputToolbar();
 setupOutputArea();
 updateOutputArea();
+setupCustomThemeEditor();
 installServiceWorker();
 
 
@@ -126,7 +130,13 @@ function updateOutputArea() {
   $output.empty();
 
   // set theme
-  $(document.body).attr('data-theme', config.theme);
+  if (config.theme == 'custom') {
+    $('.custom-theme-area').show();
+    setTheme(config.customTheme);
+  } else {
+    $('.custom-theme-area').hide();
+    setTheme(DEFAULT_THEMES[config.theme]);
+  }
 
   // build pre element
   let $pre = $('<pre>')
@@ -246,6 +256,29 @@ function measureNaturalPreWidth(pre) {
   let naturalWidth = $preClone.width();
   $preClone.remove();
   return naturalWidth;
+}
+
+
+function setupCustomThemeEditor() {
+  let $customThemeEditor = $('.custom-theme-editor');
+
+  for (let prop of THEME_PROPERTIES) {
+    let $prop = $('<div>')
+        .addClass('custom-theme-prop')
+        .appendTo($customThemeEditor);
+    let $label = $('<label>')
+        .appendTo($prop);
+    let $input = $('<input>')
+        .attr('type', 'color')
+        .val(config.customTheme[prop.id])
+        .on('input', () => {
+          config.customTheme[prop.id] = $input.val();
+          localStorage.customTheme = JSON.stringify(config.customTheme);
+          updateOutputArea();
+        })
+        .appendTo($label);
+    $label.append(`<span>${prop.name}</span>`); // text
+  }
 }
 
 

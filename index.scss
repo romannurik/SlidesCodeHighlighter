@@ -15,7 +15,6 @@
  */
 
 @import 'material-colors';
-@import 'themes';
 
 $thinBorderColor: rgba(#000, .12);
 
@@ -39,7 +38,8 @@ body {
 }
 
 .edit-area,
-.output-area {
+.output-area,
+.custom-theme-area {
   background-color: #fff;
   flex: 1 0 0;
   display: flex;
@@ -165,6 +165,36 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
+  }
+}
+
+.custom-theme-area {
+  flex: 0 0 auto;
+  display: none;
+  background-color: material-color('blue-grey', '800');
+
+  .custom-theme-editor {
+    padding: 12px;
+  }
+
+  label {
+    display: flex;
+    cursor: pointer;
+
+    span {
+      color: #fff;
+      margin-left: 8px;
+    }
+  }
+
+  input[type=color] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0 0 8px;
+    cursor: pointer;
   }
 }
 

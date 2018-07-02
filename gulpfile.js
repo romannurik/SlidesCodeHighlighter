@@ -65,8 +65,12 @@ gulp.task('generate-service-worker', () => {
 gulp.task('copy', cb => {
   return gulp.src([
     'index.html',
-    'index.js',
     'manifest.json',
+
+    // code
+    'material-colors.js',
+    'themes.js',
+    'index.js',
 
     // libs
     'bower_components/jquery/dist/jquery.min.js',

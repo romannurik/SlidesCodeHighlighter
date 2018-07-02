@@ -51,6 +51,7 @@
             <option value="dark-alt">Dark (alternate)</option>
             <option value="design-dark">Dark (design)</option>
             <option value="io17">#io17</option>
+            <option value="custom">Custom</option>
           </select>
         </div>
       </label>
@@ -68,12 +69,18 @@
       </div>
     </div>
   </div>
+  <div class="custom-theme-area">
+    <div class="title-bar">Custom theme</div>
+    <div class="custom-theme-editor"></div>
+  </div>
 
   <script src="jquery.min.js"></script>
   <script src="prettify.js"></script>
   <script src="prettify-languages.js"></script>
   <script src="ace.js"></script>
-  <script src="index.js"></script>
+  <script type="module" src="material-colors.js"></script>
+  <script type="module" src="themes.js"></script>
+  <script type="module" src="index.js"></script>
 
 </body>
 </html>
