@@ -95,11 +95,34 @@ body {
     padding: 4px 8px;
     outline: 0;
     margin-left: 8px;
-    border-radius: 2px;
+    border-radius: 4px;
 
     &:focus {
       background-color: #fff;
       color: material-color('blue-grey', '900');
+    }
+  }
+
+  button {
+    -webkit-appearance: none;
+    border: 0;
+    background-color: material-color('blue-grey', '600');
+    color: #fff;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: material-color('blue-grey', '500');
+    }
+
+    &:active {
+      background-color: material-color('blue-grey', '400');
     }
   }
 
@@ -171,7 +194,6 @@ body {
 .custom-theme-area {
   flex: 0 0 auto;
   display: none;
-  background-color: material-color('blue-grey', '800');
 
   .custom-theme-editor {
     padding: 12px;
@@ -179,10 +201,11 @@ body {
 
   label {
     display: flex;
+    align-items: center;
     cursor: pointer;
+    margin: 0 0 8px;
 
     span {
-      color: #fff;
       margin-left: 8px;
     }
   }
@@ -191,10 +214,14 @@ body {
     -webkit-appearance: none;
     appearance: none;
     background: none;
-    border: 0;
+    border: 1px solid rgba(#000, .12);
     padding: 0;
-    margin: 0 0 8px;
+    margin: 0;
     cursor: pointer;
+
+    // when not shown as a color
+    width: 6em;
+    font-family: 'Roboto Mono';
   }
 }
 
@@ -206,7 +233,7 @@ body {
   padding: 4px 8px;
   font-size: 14px;
   line-height: 20px;
-  border-radius: 2px;
+  border-radius: 4px;
   margin: 4px;
 }
 

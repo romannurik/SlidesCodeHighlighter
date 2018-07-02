@@ -260,25 +260,44 @@ function measureNaturalPreWidth(pre) {
 
 
 function setupCustomThemeEditor() {
-  let $customThemeEditor = $('.custom-theme-editor');
-
-  for (let prop of THEME_PROPERTIES) {
-    let $prop = $('<div>')
-        .addClass('custom-theme-prop')
-        .appendTo($customThemeEditor);
-    let $label = $('<label>')
-        .appendTo($prop);
-    let $input = $('<input>')
-        .attr('type', 'color')
-        .val(config.customTheme[prop.id])
-        .on('input', () => {
-          config.customTheme[prop.id] = $input.val();
-          localStorage.customTheme = JSON.stringify(config.customTheme);
-          updateOutputArea();
-        })
-        .appendTo($label);
-    $label.append(`<span>${prop.name}</span>`); // text
+  let rebuildCustomThemeProperties = () => {
+    let $customThemeEditor = $('.custom-theme-editor').empty();
+    for (let prop of THEME_PROPERTIES) {
+      let $prop = $('<div>')
+          .addClass('custom-theme-prop')
+          .appendTo($customThemeEditor);
+      let $label = $('<label>')
+          .appendTo($prop);
+      let $input = $('<input>')
+          .attr('type', 'color')
+          .val(config.customTheme[prop.id])
+          .on('input', () => {
+            config.customTheme[prop.id] = $input.val();
+            localStorage.customTheme = JSON.stringify(config.customTheme);
+            updateOutputArea();
+          })
+          .appendTo($label);
+      $label.append(`<span>${prop.name}</span>`); // text
+    }
   }
+
+  rebuildCustomThemeProperties();
+
+  $('.custom-theme-import-export').click(() => {
+    let currentJSON = JSON.stringify(config.customTheme);
+    let newJSON = window.prompt(
+        'Copy the below JSON or paste new JSON for your custom theme.', currentJSON);
+    if (newJSON && newJSON != currentJSON) {
+      try {
+        config.customTheme = Object.assign({}, DEFAULT_THEMES['light'], JSON.parse(newJSON) || {});
+        localStorage.customTheme = JSON.stringify(config.customTheme);
+        updateOutputArea();
+        rebuildCustomThemeProperties();
+      } catch (e) {
+        alert('Error parsing the JSON: ' + e);
+      }
+    }
+  });
 }
 
 
