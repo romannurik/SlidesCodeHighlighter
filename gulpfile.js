@@ -24,6 +24,10 @@ const workbox = require('workbox-build');
 const ghpages = require('gh-pages');
 const path = require('path');
 
+
+let DEV_MODE = false;
+
+
 function errorHandler(error) {
   console.error(error.stack);
   this.emit('end'); // http://stackoverflow.com/questions/23971388
@@ -31,23 +35,26 @@ function errorHandler(error) {
 
 
 gulp.task('prettify-languages', cb => {
-  return gulp.src([
-    'bower_components/google-code-prettify/src/lang*.js',
-  ])
+  return gulp.src('node_modules/code-prettify/src/lang*.js')
       .pipe($.concat('prettify-languages.js'))
       .pipe(gulp.dest('dist'));
 });
 
 
-gulp.task('generate-service-worker', () => {
-  const dist = './dist/';
+gulp.task('service-worker', () => {
+  if (DEV_MODE) {
+    return gulp.src('sw-dev.js')
+        .pipe($.rename('sw.js'))
+        .pipe(gulp.dest('dist'));
+  }
+
   return workbox.generateSW({
-    globDirectory: dist,
+    globDirectory: 'dist',
     globPatterns: [
       '**/*.{html,js,css}'
     ],
-    globIgnores: ['**/sw.js'],
-    swDest: `${dist}/sw.js`,
+    globIgnores: ['**/sw-dev.js'],
+    swDest: 'dist/sw.js',
     clientsClaim: true,
     skipWaiting: true
   }).then(({warnings}) => {
@@ -62,7 +69,7 @@ gulp.task('generate-service-worker', () => {
 });
 
 
-gulp.task('copy', cb => {
+gulp.task('copy', () => {
   return gulp.src([
     'index.html',
     'manifest.json',
@@ -73,11 +80,11 @@ gulp.task('copy', cb => {
     'index.js',
 
     // libs
-    'bower_components/jquery/dist/jquery.min.js',
-    'bower_components/google-code-prettify/src/prettify.js',
-    'bower_components/ace-builds/src-min-noconflict/ace.js',
-    'bower_components/ace-builds/src-min-noconflict/mode-text.js',
-    'bower_components/ace-builds/src-min-noconflict/theme-chrome.js',
+    'node_modules/jquery/dist/jquery.min.js',
+    'node_modules/code-prettify/src/prettify.js',
+    'node_modules/ace-builds/src-min-noconflict/ace.js',
+    'node_modules/ace-builds/src-min-noconflict/mode-text.js',
+    'node_modules/ace-builds/src-min-noconflict/theme-chrome.js',
 
     // icons
     'images/**/*.png'
@@ -104,8 +111,13 @@ gulp.task('clean', cb => {
   cb();
 });
 
+gulp.task('serve', (cb) => {
+  DEV_MODE = true;
+  runSequence('__serve__', cb);
+});
 
-gulp.task('serve', ['build'], () => {
+gulp.task('__serve__', ['build'], () => {
+
   browserSync({
     notify: false,
     server: {
@@ -119,7 +131,11 @@ gulp.task('serve', ['build'], () => {
 
 
 gulp.task('build', cb => {
-  runSequence(['styles'], ['prettify-languages', 'copy'], 'generate-service-worker', cb);
+  runSequence(
+      ['styles'],
+      ['prettify-languages', 'copy'],
+      'service-worker',
+      cb);
 });
 
 

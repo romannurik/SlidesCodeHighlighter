@@ -4,6 +4,7 @@
   "devDependencies": {
     "browser-sync": "^2.24.4",
     "del": "^3.0.0",
+    "gh-pages": "^1.1.0",
     "gulp": "^3.9.1",
     "gulp-cache": "^1.0.2",
     "gulp-changed": "^3.2.0",
@@ -11,22 +12,31 @@
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
+    "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.1",
     "gulp-size": "^3.0.0",
     "gulp-util": "^3.0.8",
+    "import-glob": "^1.5.0",
     "node-util": "0.0.1",
     "path": "^0.12.7",
-    "run-sequence": "^2.2.1"
+    "run-sequence": "^2.2.1",
+    "workbox-build": "^3.2.0"
+  },
+  "author": {
+    "name": "Roman Nurik",
+    "email": "roman@nurik.net"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "private": true,
   "scripts": {
-    "postinstall": "bower install"
+    "build": "gulp",
+    "start": "gulp serve"
   },
   "dependencies": {
-    "gh-pages": "^1.1.0",
-    "workbox-build": "^3.2.0"
+    "ace-builds": "^1.4.1",
+    "code-prettify": "git+https://github.com/google/code-prettify.git",
+    "jquery": "^3.3.1"
   }
 }
