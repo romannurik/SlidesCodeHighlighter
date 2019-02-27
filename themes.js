@@ -29,6 +29,14 @@ export const THEME_PROPERTIES = [
   { id: 'declarationColor', name: 'Declarations' },
 ];
 
+const SEL_PLAIN_TEXT = '.pln';
+const SEL_PUNCTUATION = '.pun, .opn, .clo'; // punc, lisp open bracket, lisp close bracket
+const SEL_STRING_VALUE = '.str, .atv'; // string content and attribute value
+const SEL_KEYWORD_TAG = '.kwd, .tag'; // keyword, html tag
+const SEL_COMMENT = '.com';
+const SEL_TYPE = '.typ, .atn'; // a type name or attribute name
+const SEL_LITERAL = '.lit'; // literal value
+const SEL_DECLARATION = '.dec, .var'; // declaration (like doctype), variable name
 
 export function setTheme(theme) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
@@ -40,21 +48,14 @@ export function setTheme(theme) {
       /* to avoid background color being copied to clipboard */
       background-color: ${bgColor};
     }
-    .pln { color: ${textColor}; }  /* plain text */
-    .clo { color: ${punctuationColor}; } /* punctuation, lisp open bracket, lisp close bracket */
-    /*.fun { color: $functionColor; }  /* a function name (seems to be unused) */
-    .str,
-    .atv { color: ${stringAndValueColor}; }  /* string content and attribute value */
-    .kwd,
-    .tag { color: ${keywordTagColor};  }  /* a keyword or tag */
-    .com { color: ${commentColor}; }  /* a comment */
-    .typ,
-    .atn { color: ${typeColor}; }  /* a type name or xq variable */
-    .lit { color: ${numberColor}; }  /* a literal value */
-    .pun,
-    .opn,
-    .dec,
-    .var { color: ${declarationColor}; }  /* a declaration like doctype, and variable name */
+    ${SEL_PLAIN_TEXT} { color: ${textColor}; }
+    ${SEL_PUNCTUATION} { color: ${punctuationColor}; }
+    ${SEL_STRING_VALUE} { color: ${stringAndValueColor}; }
+    ${SEL_KEYWORD_TAG} { color: ${keywordTagColor}; }
+    ${SEL_COMMENT} { color: ${commentColor}; }
+    ${SEL_TYPE} { color: ${typeColor}; }
+    ${SEL_LITERAL} { color: ${numberColor}; }
+    ${SEL_DECLARATION} { color: ${declarationColor}; }
   `;
 
   $('[theme-rules]').remove();
@@ -132,5 +133,16 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8857', // ff6d00
     numberColor: '#ffd500',
     declarationColor: '#90a4ae',
+  },
+  'io19': {
+    bgColor: '#202124',
+    textColor: '#fff',
+    punctuationColor: '#9aa0a6',
+    stringAndValueColor: '#5bb974',
+    keywordTagColor: '#669df6',
+    commentColor: '#9aa0a6',
+    typeColor: '#ee675c',
+    numberColor: '#fcc934',
+    declarationColor: '#fcc934',
   }
 };
