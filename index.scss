@@ -165,6 +165,7 @@ body {
   flex: 1;
   position: relative;
   padding: 20px;
+  line-height: 1.5;
 
   pre {
     position: absolute;
@@ -174,7 +175,6 @@ body {
     margin: 0;
     font-family: 'Roboto Mono';
     font-size: 10px;
-    line-height: 14px;
     z-index: 1;
   }
 

@@ -139,12 +139,15 @@ function updateOutputArea() {
   }
 
   // build pre element
+  let lineHeight = config.typeSize * (
+    DEFAULT_THEMES[config.theme].lineHeight || 1.5
+  );
   let $pre = $('<pre>')
       .addClass('prettyprint')
       .css({
         'font-size': `${config.typeSize}px`,
-        'line-height': `${config.typeSize * 1.5}px`,
-        'background': 'transparent'
+        'line-height': `${lineHeight}px`,
+        'background': 'transparent',
       })
       .text(cleanupCode(config.code))
       .appendTo($output);

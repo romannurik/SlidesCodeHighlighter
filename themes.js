@@ -27,6 +27,7 @@ export const THEME_PROPERTIES = [
   { id: 'typeColor', name: 'Types' },
   { id: 'numberColor', name: 'Numbers' },
   { id: 'declarationColor', name: 'Declarations' },
+  { id: 'lineHeight', name: 'Line height' },
 ];
 
 const SEL_PLAIN_TEXT = '.pln';
@@ -41,7 +42,7 @@ const SEL_DECLARATION = '.dec, .var'; // declaration (like doctype), variable na
 export function setTheme(theme) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
        keywordTagColor, commentColor, typeColor, numberColor,
-       declarationColor} = theme;
+       declarationColor, lineHeight} = theme;
 
   let css = `
     #output::after {
@@ -77,6 +78,7 @@ export const DEFAULT_THEMES = {
     typeColor: materialColor('purple', '500'),
     numberColor: '#c53929', // g-red 700
     declarationColor: materialColor('indigo', '500'),
+    lineHeight: 1.5,
   },
   'light-alt': {
     bgColor: '#eee',
@@ -89,6 +91,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#db4437',
     // attrNameColor: #e91e63,
     declarationColor: '#e67c73',
+    lineHeight: 1.5,
   },
   'dark': {
     bgColor: materialColor('grey', '900'),
@@ -99,7 +102,8 @@ export const DEFAULT_THEMES = {
     commentColor: materialColor('pink', '300'),
     typeColor: materialColor('purple', '200'),
     numberColor: materialColor('yellow', '700'),
-    declarationColor: materialColor('yellow', '700')
+    declarationColor: materialColor('yellow', '700'),
+    lineHeight: 1.5,
   },
   'dark-alt': {
     bgColor: '#000',
@@ -111,6 +115,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8a65', // alt #f06292
     numberColor: '#f4b400',
     declarationColor: '#e67c73',
+    lineHeight: 1.5,
   },
   'design-dark': {
     bgColor: '#263238',
@@ -122,6 +127,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8a80',
     numberColor: '#ffbc00',
     declarationColor: '#90a4ae',
+    lineHeight: 1.5,
   },
   'io17': {
     bgColor: '#263238', // #546dfe
@@ -133,6 +139,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8857', // ff6d00
     numberColor: '#ffd500',
     declarationColor: '#90a4ae',
+    lineHeight: 1.2,
   },
   'io19': {
     bgColor: '#202124',
@@ -144,5 +151,6 @@ export const DEFAULT_THEMES = {
     typeColor: '#ee675c',
     numberColor: '#fcc934',
     declarationColor: '#fcc934',
-  }
+    lineHeight: 1.2,
+  },
 };
