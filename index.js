@@ -132,21 +132,17 @@ function updateOutputArea() {
   // set theme
   if (config.theme == 'custom') {
     $('.custom-theme-area').show();
-    setTheme(config.customTheme);
+    setTheme(config.customTheme, config.typeSize);
   } else {
     $('.custom-theme-area').hide();
-    setTheme(DEFAULT_THEMES[config.theme]);
+    setTheme(DEFAULT_THEMES[config.theme], config.typeSize);
   }
 
   // build pre element
-  let lineHeight = config.typeSize * (
-    DEFAULT_THEMES[config.theme].lineHeight || 1.5
-  );
   let $pre = $('<pre>')
       .addClass('prettyprint')
       .css({
         'font-size': `${config.typeSize}px`,
-        'line-height': `${lineHeight}px`,
         'background': 'transparent',
       })
       .text(cleanupCode(config.code))

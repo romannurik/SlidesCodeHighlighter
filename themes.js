@@ -39,12 +39,15 @@ const SEL_TYPE = '.typ, .atn'; // a type name or attribute name
 const SEL_LITERAL = '.lit'; // literal value
 const SEL_DECLARATION = '.dec, .var'; // declaration (like doctype), variable name
 
-export function setTheme(theme) {
+export function setTheme(theme, typeSize) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
        keywordTagColor, commentColor, typeColor, numberColor,
        declarationColor, lineHeight} = theme;
-
+  lineHeight = lineHeight || 1.5;
   let css = `
+    #output pre {
+      line-height: ${lineHeight * typeSize}px;
+    }
     #output::after {
       /* to avoid background color being copied to clipboard */
       background-color: ${bgColor};
