@@ -158,14 +158,14 @@ export const DEFAULT_THEMES = {
   },
   'flutter-interact-19': {
     "bgColor":"#241e30",
-    "textColor":"#FAFBFB",
-    "punctuationColor":"#8BE9FD",
-    "stringAndValueColor":"#FF8383",
-    "keywordTagColor":"#1CDEC9",
+    "textColor":"#fafbfb",
+    "punctuationColor":"#8be9fd",
+    "stringAndValueColor":"#ffa65c",
+    "keywordTagColor":"#1cdec9",
     "commentColor":"#808080",
-    "typeColor":"#FF5722",
-    "numberColor":"#CE63FF",
-    "declarationColor":"#B93C5D",
+    "typeColor":"#d65bad",
+    "numberColor":"#bd93f9",
+    "declarationColor":"#ff8383",
     "lineHeight":1.2,
   }
 };
