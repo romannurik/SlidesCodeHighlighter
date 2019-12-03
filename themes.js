@@ -156,7 +156,7 @@ export const DEFAULT_THEMES = {
     declarationColor: '#fcc934',
     lineHeight: 1.2,
   },
-  'Flutter Interact 2019': {
+  'flutter-interact-19': {
     "bgColor":"#241e30",
     "textColor":"#FAFBFB",
     "punctuationColor":"#8BE9FD",
