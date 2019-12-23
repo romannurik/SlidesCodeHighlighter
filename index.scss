@@ -189,6 +189,14 @@ body {
     right: 0;
     bottom: 0;
   }
+
+  &.has-highlights {
+    pre {
+      mark {
+        background-color: transparent;
+      }
+    }
+  }
 }
 
 .custom-theme-area {

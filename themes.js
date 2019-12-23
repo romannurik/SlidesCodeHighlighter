@@ -27,39 +27,57 @@ export const THEME_PROPERTIES = [
   { id: 'typeColor', name: 'Types' },
   { id: 'numberColor', name: 'Numbers' },
   { id: 'declarationColor', name: 'Declarations' },
+  { id: 'dimmedColor', name: 'Dimmed (not highlighted)' },
   { id: 'lineHeight', name: 'Line height' },
 ];
 
-const SEL_PLAIN_TEXT = '.pln';
-const SEL_PUNCTUATION = '.pun, .opn, .clo'; // punc, lisp open bracket, lisp close bracket
-const SEL_STRING_VALUE = '.str, .atv'; // string content and attribute value
-const SEL_KEYWORD_TAG = '.kwd, .tag'; // keyword, html tag
-const SEL_COMMENT = '.com';
-const SEL_TYPE = '.typ, .atn'; // a type name or attribute name
-const SEL_LITERAL = '.lit'; // literal value
-const SEL_DECLARATION = '.dec, .var'; // declaration (like doctype), variable name
+const CLS_PLAIN_TEXT = ['pln'];
+const CLS_PUNCTUATION = ['pun', 'opn', 'clo']; // punc, lisp open bracket, lisp close bracket
+const CLS_STRING_VALUE = ['str', 'atv']; // string content and attribute value
+const CLS_KEYWORD_TAG = ['kwd', 'tag']; // keyword, html tag
+const CLS_COMMENT = ['com'];
+const CLS_TYPE = ['typ', 'atn']; // a type name or attribute name
+const CLS_LITERAL = ['lit']; // literal value
+const CLS_DECLARATION = ['dec', 'var']; // declaration (like doctype), variable name
+
+function sel(classes, extra = '') {
+  return classes.map(cls => `.${cls} ${extra}`).join(', ');
+}
 
 export function setTheme(theme, typeSize) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
        keywordTagColor, commentColor, typeColor, numberColor,
-       declarationColor, lineHeight} = theme;
+       declarationColor, dimmedColor, lineHeight} = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
     #output pre {
       line-height: ${lineHeight * typeSize}px;
     }
+    #output pre .nomark {
+      color: ${dimmedColor || 'red'};
+    }
     #output::after {
       /* to avoid background color being copied to clipboard */
       background-color: ${bgColor};
     }
-    ${SEL_PLAIN_TEXT} { color: ${textColor}; }
-    ${SEL_PUNCTUATION} { color: ${punctuationColor}; }
-    ${SEL_STRING_VALUE} { color: ${stringAndValueColor}; }
-    ${SEL_KEYWORD_TAG} { color: ${keywordTagColor}; }
-    ${SEL_COMMENT} { color: ${commentColor}; }
-    ${SEL_TYPE} { color: ${typeColor}; }
-    ${SEL_LITERAL} { color: ${numberColor}; }
-    ${SEL_DECLARATION} { color: ${declarationColor}; }
+
+    ${sel(CLS_PLAIN_TEXT)} { color: ${textColor}; }
+    ${sel(CLS_PUNCTUATION)} { color: ${punctuationColor}; }
+    ${sel(CLS_STRING_VALUE)} { color: ${stringAndValueColor}; }
+    ${sel(CLS_KEYWORD_TAG)} { color: ${keywordTagColor}; }
+    ${sel(CLS_COMMENT)} { color: ${commentColor}; }
+    ${sel(CLS_TYPE)} { color: ${typeColor}; }
+    ${sel(CLS_LITERAL)} { color: ${numberColor}; }
+    ${sel(CLS_DECLARATION)} { color: ${declarationColor}; }
+
+    ${sel(CLS_PLAIN_TEXT, 'mark')} { color: ${textColor}; }
+    ${sel(CLS_PUNCTUATION, 'mark')} { color: ${punctuationColor}; }
+    ${sel(CLS_STRING_VALUE, 'mark')} { color: ${stringAndValueColor}; }
+    ${sel(CLS_KEYWORD_TAG, 'mark')} { color: ${keywordTagColor}; }
+    ${sel(CLS_COMMENT, 'mark')} { color: ${commentColor}; }
+    ${sel(CLS_TYPE, 'mark')} { color: ${typeColor}; }
+    ${sel(CLS_LITERAL, 'mark')} { color: ${numberColor}; }
+    ${sel(CLS_DECLARATION, 'mark')} { color: ${declarationColor}; }
   `;
 
   $('[theme-rules]').remove();
@@ -81,6 +99,7 @@ export const DEFAULT_THEMES = {
     typeColor: materialColor('purple', '500'),
     numberColor: '#c53929', // g-red 700
     declarationColor: materialColor('indigo', '500'),
+    dimmedColor: materialColor('grey', '400'),
     lineHeight: 1.5,
   },
   'light-alt': {
@@ -94,6 +113,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#db4437',
     // attrNameColor: #e91e63,
     declarationColor: '#e67c73',
+    dimmedColor: materialColor('grey', '400'),
     lineHeight: 1.5,
   },
   'dark': {
@@ -106,6 +126,7 @@ export const DEFAULT_THEMES = {
     typeColor: materialColor('purple', '200'),
     numberColor: materialColor('yellow', '700'),
     declarationColor: materialColor('yellow', '700'),
+    dimmedColor: materialColor('grey', '500'),
     lineHeight: 1.5,
   },
   'dark-alt': {
@@ -118,6 +139,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8a65', // alt #f06292
     numberColor: '#f4b400',
     declarationColor: '#e67c73',
+    dimmedColor: '#777',
     lineHeight: 1.5,
   },
   'design-dark': {
@@ -130,6 +152,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8a80',
     numberColor: '#ffbc00',
     declarationColor: '#90a4ae',
+    dimmedColor: '#5f6c73',
     lineHeight: 1.5,
   },
   'io17': {
@@ -142,6 +165,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ff8857', // ff6d00
     numberColor: '#ffd500',
     declarationColor: '#90a4ae',
+    dimmedColor: '#5f6c73',
     lineHeight: 1.2,
   },
   'io19': {
@@ -154,6 +178,7 @@ export const DEFAULT_THEMES = {
     typeColor: '#ee675c',
     numberColor: '#fcc934',
     declarationColor: '#fcc934',
+    dimmedColor: '#5f6c73',
     lineHeight: 1.2,
   },
 };

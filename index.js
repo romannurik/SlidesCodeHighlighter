@@ -18,6 +18,7 @@ import {setTheme, DEFAULT_THEMES, THEME_PROPERTIES} from './themes.js';
 
 const WARN_LINES = 15;
 const WARN_LINE_LENGTH = 80;
+const SOFT_TAB = '  '; // 4 spaces
 
 const $editor = $('#editor');
 const $output = $('#output');
@@ -30,6 +31,8 @@ let config = {
   customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
 
+let editor;
+
 setupEditorToolbar();
 setupEditor();
 setupOutputToolbar();
@@ -40,7 +43,7 @@ installServiceWorker();
 
 
 function setupEditor() {
-  let editor = ace.edit($editor.get(0));
+  editor = ace.edit($editor.get(0));
   editor.$blockScrolling = Infinity;
   editor.setValue(config.code, -1);
   editor.setTheme('ace/theme/chrome');
@@ -53,6 +56,8 @@ function setupEditor() {
     localStorage.highlighterCode = config.code = editor.getValue();
     updateOutputArea();
   });
+  editor.getSelection().on('changeCursor', () => updateOutputArea());
+  editor.getSelection().on('changeSelection', () => updateOutputArea());
 }
 
 
@@ -145,13 +150,15 @@ function updateOutputArea() {
         'font-size': `${config.typeSize}px`,
         'background': 'transparent',
       })
-      .text(cleanupCode(config.code))
+      .text(cleanupCode(config.code).code)
       .appendTo($output);
   if (config.lang != '--') {
     $pre.addClass(`lang-${config.lang}`);
   }
 
   prettyPrint();
+
+  highlightSelection();
 
   // find width by measuring the longest line
   let preWidth = Math.max(1, measureNaturalPreWidth($pre));
@@ -198,10 +205,61 @@ function updateOutputArea() {
           .appendTo($messages));
 }
 
+function highlightSelection() {
+  let rawCode = config.code;
+  let {code, commonIndent} = cleanupCode(rawCode);
+  let preRoot = $output.find('pre').get(0);
+
+  let rangeToCharPos = ({row, column}) => code.split(/\n/)
+      .slice(0, row)
+      .reduce((a, r) => a + r.length + 1, 0)
+      + Math.max(0,
+          ((rawCode.split(/\n/)[row] || '').substring(0, column).match(/\t/g) || []).length
+            * (SOFT_TAB.length - 1)
+          + column - commonIndent);
+
+  let htmlEscape = s => s
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+  // TODO: ranges must be monotonically increasing, and other stuff.
+  let hasHighlights = false;
+  for (let range of editor.getSelection().getAllRanges()) {
+    let targetStartPos = rangeToCharPos(range.start);
+    let targetEndPos = rangeToCharPos(range.end);
+
+    if (targetEndPos == targetStartPos) {
+      continue;
+    }
+    hasHighlights = true;
+
+    let childStartPos = 0;
+    for (let child of Array.from(preRoot.childNodes)) {
+      let childContent = child.textContent;
+      let childEndPos = childStartPos + childContent.length;
+
+      if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
+        // some overlap
+        let startInChild = Math.max(0, targetStartPos - childStartPos);
+        let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
+        child.innerHTML = '<span class="nomark">' + htmlEscape(childContent.substring(0, startInChild)) + '</span>'
+            + '<mark>' + htmlEscape(childContent.substring(startInChild, endInChild)) + '</mark>'
+            + '<span class="nomark">' + htmlEscape(childContent.substring(endInChild)) + '</span>';
+      } else {
+        child.innerHTML = '<span class="nomark">' + child.innerHTML + '</span>';
+      }
+
+      childStartPos = childEndPos;
+    }
+  }
+
+  $output.toggleClass('has-highlights', hasHighlights);
+}
+
 
 function cleanupCode(code) {
   // Tabs to 4 spaces
-  code = code.replace(/\t/g, '    ');
+  code = code.replace(/\t/g, SOFT_TAB);
 
   // Remove trailing whitespace
   code = code.replace(/ +\n/g, '\n');
@@ -227,7 +285,7 @@ function cleanupCode(code) {
         .join('\n');
   }
 
-  return code;
+  return {code, commonIndent};
 }
 
 
