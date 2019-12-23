@@ -72,6 +72,7 @@ gulp.task('service-worker', () => {
 gulp.task('copy', () => {
   return gulp.src([
     'index.html',
+    'favicon.ico',
     'manifest.json',
 
     // code
