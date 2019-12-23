@@ -38,6 +38,16 @@
           </select>
         </div>
       </label>
+
+      <label>
+        Tab size
+        <div class="select-wrapper">
+          <select id="tab-size">
+            <option value="2">2</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </label>
     </div>
     <div id="editor"></div>
     <div class="messages"></div>
@@ -66,6 +76,18 @@
         Type size
         <input id="type-size" value="40">
       </label>
+
+      <label>
+        Selected text (Beta)
+        <div class="select-wrapper">
+          <select id="selection-treatment">
+            <option value="--">Do nothing</option>
+            <option value="focus">Focus</option>
+            <option value="bold">Bold</option>
+            <option value="highlight">Highlight</option>
+          </select>
+        </div>
+      </label>
     </div>
     <div id="output"></div>
     <div class="messages">
@@ -73,6 +95,7 @@
         For best results, copy from Safari with Keynote decks and from Chrome
         with Google Slides decks.
       </div>
+      <div class="message message-info message-bgcolor"></div>
     </div>
   </div>
   <div class="custom-theme-area">

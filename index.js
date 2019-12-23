@@ -18,7 +18,6 @@ import {setTheme, DEFAULT_THEMES, THEME_PROPERTIES} from './themes.js';
 
 const WARN_LINES = 15;
 const WARN_LINE_LENGTH = 80;
-const SOFT_TAB = '  '; // 4 spaces
 
 const $editor = $('#editor');
 const $output = $('#output');
@@ -27,15 +26,16 @@ let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
   lang: localStorage.highlighterLang || '--',
+  tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
+  selectionTreatment: localStorage.highlighterSelectionTreatment || '--',
   customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
 
 let editor;
 
-setupEditorToolbar();
+setupToolbar();
 setupEditor();
-setupOutputToolbar();
 setupOutputArea();
 updateOutputArea();
 setupCustomThemeEditor();
@@ -58,6 +58,12 @@ function setupEditor() {
   });
   editor.getSelection().on('changeCursor', () => updateOutputArea());
   editor.getSelection().on('changeSelection', () => updateOutputArea());
+  updateEditorParams();
+}
+
+
+function updateEditorParams() {
+  editor.getSession().setTabSize(config.tabSize);
 }
 
 
@@ -76,27 +82,37 @@ function setupOutputArea() {
 }
 
 
-function setupEditorToolbar() {
-  let $theme = $('#theme');
-  let $lang = $('#lang');
-
-  $theme
+function setupToolbar() {
+  $('#theme')
       .val(config.theme)
-      .on('input', () => {
-        localStorage.highlighterTheme = config.theme = $theme.val();
+      .on('input', ev => {
+        localStorage.highlighterTheme = config.theme = $(ev.target).val();
         updateOutputArea();
       });
 
-  $lang
+  $('#lang')
       .val(config.lang)
-      .on('input', () => {
-        localStorage.highlighterLang = config.lang = $lang.val();
+      .on('input', ev => {
+        localStorage.highlighterLang = config.lang = $(ev.target).val();
         updateOutputArea();
       });
-}
 
+  $('#tab-size')
+      .val(config.tabSize)
+      .on('input', ev => {
+        localStorage.highlighterTabSize = $(ev.target).val();
+        config.tabSize = Number(localStorage.highlighterTabSize);
+        updateEditorParams();
+        updateOutputArea();
+      });
 
-function setupOutputToolbar() {
+  $('#selection-treatment')
+      .val(config.selectionTreatment)
+      .on('input', ev => {
+        localStorage.highlighterSelectionTreatment = config.selectionTreatment = $(ev.target).val();
+        updateOutputArea();
+      });
+
   let $typeSize = $('#type-size');
 
   let setTypeSize_ = size => {
@@ -157,7 +173,6 @@ function updateOutputArea() {
   }
 
   prettyPrint();
-
   highlightSelection();
 
   // find width by measuring the longest line
@@ -205,7 +220,18 @@ function updateOutputArea() {
           .appendTo($messages));
 }
 
+const htmlEscape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 function highlightSelection() {
+  $output.removeClass('has-highlights');
+  $output.removeAttr('data-seltreat');
+
+  if (config.selectionTreatment == '--') {
+    return;
+  }
+
+  $output.attr('data-seltreat', config.selectionTreatment);
+
   let rawCode = config.code;
   let {code, commonIndent} = cleanupCode(rawCode);
   let preRoot = $output.find('pre').get(0);
@@ -215,14 +241,9 @@ function highlightSelection() {
       .reduce((a, r) => a + r.length + 1, 0)
       + Math.max(0,
           ((rawCode.split(/\n/)[row] || '').substring(0, column).match(/\t/g) || []).length
-            * (SOFT_TAB.length - 1)
+            * (config.tabSize - 1)
           + column - commonIndent);
 
-  let htmlEscape = s => s
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-
-  // TODO: ranges must be monotonically increasing, and other stuff.
   let hasHighlights = false;
   for (let range of editor.getSelection().getAllRanges()) {
     let targetStartPos = rangeToCharPos(range.start);
@@ -242,11 +263,23 @@ function highlightSelection() {
         // some overlap
         let startInChild = Math.max(0, targetStartPos - childStartPos);
         let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
-        child.innerHTML = '<span class="nomark">' + htmlEscape(childContent.substring(0, startInChild)) + '</span>'
-            + '<mark>' + htmlEscape(childContent.substring(startInChild, endInChild)) + '</mark>'
-            + '<span class="nomark">' + htmlEscape(childContent.substring(endInChild)) + '</span>';
-      } else {
-        child.innerHTML = '<span class="nomark">' + child.innerHTML + '</span>';
+
+        let makeSub = (tag, start, end) => {
+          if (start == end) {
+            return null;
+          }
+
+          let f = document.createElement(tag);
+          f.className = child.className;
+          f.innerHTML = htmlEscape(childContent.substring(start, end));
+          return f;
+        };
+
+        child.replaceWith.apply(child, [
+          makeSub('span', 0, startInChild),
+          makeSub('mark', startInChild, endInChild),
+          makeSub('span', endInChild, childContent.length),
+        ].filter(s => !!s));
       }
 
       childStartPos = childEndPos;
@@ -259,7 +292,7 @@ function highlightSelection() {
 
 function cleanupCode(code) {
   // Tabs to 4 spaces
-  code = code.replace(/\t/g, SOFT_TAB);
+  code = code.replace(/\t/g, ' '.repeat(config.tabSize));
 
   // Remove trailing whitespace
   code = code.replace(/ +\n/g, '\n');

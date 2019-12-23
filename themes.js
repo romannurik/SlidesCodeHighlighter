@@ -27,7 +27,8 @@ export const THEME_PROPERTIES = [
   { id: 'typeColor', name: 'Types' },
   { id: 'numberColor', name: 'Numbers' },
   { id: 'declarationColor', name: 'Declarations' },
-  { id: 'dimmedColor', name: 'Dimmed (not highlighted)' },
+  { id: 'dimmedColor', name: 'Selection mode - dimmed text' },
+  { id: 'highlightColor', name: 'Highlighted text (soe modes)' },
   { id: 'lineHeight', name: 'Line height' },
 ];
 
@@ -47,14 +48,17 @@ function sel(classes, extra = '') {
 export function setTheme(theme, typeSize) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
        keywordTagColor, commentColor, typeColor, numberColor,
-       declarationColor, dimmedColor, lineHeight} = theme;
+       declarationColor, dimmedColor, highlightColor, lineHeight} = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
     #output pre {
       line-height: ${lineHeight * typeSize}px;
     }
-    #output pre .nomark {
-      color: ${dimmedColor || 'red'};
+    #output.has-highlights[data-seltreat="focus"] pre > :not(mark) {
+      color: ${dimmedColor || 'grey'};
+    }
+    #output.has-highlights[data-seltreat="highlight"] pre mark {
+      background-color: ${highlightColor || 'yellow'};
     }
     #output::after {
       /* to avoid background color being copied to clipboard */
@@ -69,15 +73,6 @@ export function setTheme(theme, typeSize) {
     ${sel(CLS_TYPE)} { color: ${typeColor}; }
     ${sel(CLS_LITERAL)} { color: ${numberColor}; }
     ${sel(CLS_DECLARATION)} { color: ${declarationColor}; }
-
-    ${sel(CLS_PLAIN_TEXT, 'mark')} { color: ${textColor}; }
-    ${sel(CLS_PUNCTUATION, 'mark')} { color: ${punctuationColor}; }
-    ${sel(CLS_STRING_VALUE, 'mark')} { color: ${stringAndValueColor}; }
-    ${sel(CLS_KEYWORD_TAG, 'mark')} { color: ${keywordTagColor}; }
-    ${sel(CLS_COMMENT, 'mark')} { color: ${commentColor}; }
-    ${sel(CLS_TYPE, 'mark')} { color: ${typeColor}; }
-    ${sel(CLS_LITERAL, 'mark')} { color: ${numberColor}; }
-    ${sel(CLS_DECLARATION, 'mark')} { color: ${declarationColor}; }
   `;
 
   $('[theme-rules]').remove();
@@ -86,6 +81,7 @@ export function setTheme(theme, typeSize) {
       .attr('theme-rules', true)
       .text(css)
       .appendTo(document.body);
+  $('.message-bgcolor').text(`Set your background color to: ${bgColor.toUpperCase()}`);
 }
 
 export const DEFAULT_THEMES = {
@@ -100,6 +96,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#c53929', // g-red 700
     declarationColor: materialColor('indigo', '500'),
     dimmedColor: materialColor('grey', '400'),
+    highlightColor: materialColor('grey', '300'),
     lineHeight: 1.5,
   },
   'light-alt': {
@@ -114,6 +111,7 @@ export const DEFAULT_THEMES = {
     // attrNameColor: #e91e63,
     declarationColor: '#e67c73',
     dimmedColor: materialColor('grey', '400'),
+    highlightColor: '#ddd',
     lineHeight: 1.5,
   },
   'dark': {
@@ -127,6 +125,7 @@ export const DEFAULT_THEMES = {
     numberColor: materialColor('yellow', '700'),
     declarationColor: materialColor('yellow', '700'),
     dimmedColor: materialColor('grey', '500'),
+    highlightColor: materialColor('grey', '700'),
     lineHeight: 1.5,
   },
   'dark-alt': {
@@ -140,6 +139,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#f4b400',
     declarationColor: '#e67c73',
     dimmedColor: '#777',
+    highlightColor: '#444',
     lineHeight: 1.5,
   },
   'design-dark': {
@@ -153,6 +153,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#ffbc00',
     declarationColor: '#90a4ae',
     dimmedColor: '#5f6c73',
+    highlightColor: '#586870',
     lineHeight: 1.5,
   },
   'io17': {
@@ -166,6 +167,7 @@ export const DEFAULT_THEMES = {
     numberColor: '#ffd500',
     declarationColor: '#90a4ae',
     dimmedColor: '#5f6c73',
+    highlightColor: '#586870',
     lineHeight: 1.2,
   },
   'io19': {
@@ -179,18 +181,21 @@ export const DEFAULT_THEMES = {
     numberColor: '#fcc934',
     declarationColor: '#fcc934',
     dimmedColor: '#5f6c73',
+    highlightColor: '#4d555b',
     lineHeight: 1.2,
   },
   'flutter-interact-19': {
-    "bgColor":"#241e30",
-    "textColor":"#fafbfb",
-    "punctuationColor":"#8be9fd",
-    "stringAndValueColor":"#ffa65c",
-    "keywordTagColor":"#1cdec9",
-    "commentColor":"#808080",
-    "typeColor":"#d65bad",
-    "numberColor":"#bd93f9",
-    "declarationColor":"#ff8383",
-    "lineHeight":1.2,
+    bgColor: "#241e30",
+    textColor: "#fafbfb",
+    punctuationColor: "#8be9fd",
+    stringAndValueColor: "#ffa65c",
+    keywordTagColor: "#1cdec9",
+    commentColor: "#808080",
+    typeColor: "#d65bad",
+    numberColor: "#bd93f9",
+    declarationColor: "#ff8383",
+    dimmedColor: "#87858e",
+    highlightColor: '#425a6c',
+    lineHeight: 1.2,
   }
 };

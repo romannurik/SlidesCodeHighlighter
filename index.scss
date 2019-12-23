@@ -126,6 +126,10 @@ body {
     }
   }
 
+  #type-size {
+    width: 40px;
+  }
+
   .select-wrapper {
     position: relative;
 
@@ -191,9 +195,17 @@ body {
   }
 
   &.has-highlights {
-    pre {
+    mark {
+      background-color: transparent;
+    }
+    &[data-seltreat="bold"] {
       mark {
-        background-color: transparent;
+        font-weight: 700;
+      }
+    }
+    &[data-seltreat="highlight"] {
+      mark {
+        padding: .1em 0;
       }
     }
   }
