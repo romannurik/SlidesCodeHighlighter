@@ -12,13 +12,7 @@ If you want to contribute, you can build and serve the web app locally as follow
 
   1. First install [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/).
 
-  2. Install `bower` and `gulp`:
-
-     ```
-     $ npm install -g bower gulp
-     ```
-
-  3. Clone the repository and in the root directory, run:
+  2. Clone the repository and in the root directory, run:
 
      ```
      $ npm install
@@ -27,5 +21,5 @@ If you want to contribute, you can build and serve the web app locally as follow
   4. To build and serve the web app locally, run:
 
      ```
-     $ gulp serve
+     $ npm run start
      ```

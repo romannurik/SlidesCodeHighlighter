@@ -181,4 +181,16 @@ export const DEFAULT_THEMES = {
     dimmedColor: '#5f6c73',
     lineHeight: 1.2,
   },
+  'flutter-interact-19': {
+    "bgColor":"#241e30",
+    "textColor":"#fafbfb",
+    "punctuationColor":"#8be9fd",
+    "stringAndValueColor":"#ffa65c",
+    "keywordTagColor":"#1cdec9",
+    "commentColor":"#808080",
+    "typeColor":"#d65bad",
+    "numberColor":"#bd93f9",
+    "declarationColor":"#ff8383",
+    "lineHeight":1.2,
+  }
 };
