@@ -26,6 +26,7 @@ let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
   lang: localStorage.highlighterLang || '--',
+  font: localStorage.highlighterFont || 'Roboto Mono',
   tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
   selectionTreatment: localStorage.highlighterSelectionTreatment || '--',
@@ -39,6 +40,7 @@ setupEditor();
 setupOutputArea();
 updateOutputArea();
 setupCustomThemeEditor();
+loadFont();
 installServiceWorker();
 
 
@@ -63,6 +65,10 @@ function setupEditor() {
 
 
 function updateEditorParams() {
+  editor.setOptions({
+    fontFamily: config.font,
+    fontSize: '11pt',
+  });
   editor.getSession().setTabSize(config.tabSize);
 }
 
@@ -106,6 +112,13 @@ function setupToolbar() {
         updateOutputArea();
       });
 
+  $('#font')
+      .val(config.font)
+      .on('input', ev => {
+        localStorage.highlighterFont = config.font = $(ev.target).val();
+        loadFont();
+      });
+
   $('#selection-treatment')
       .val(config.selectionTreatment)
       .on('input', ev => {
@@ -144,6 +157,19 @@ function setupToolbar() {
 }
 
 
+function loadFont() {
+  WebFont.load({
+    google: {
+      families: [`${config.font}:400,700`]
+    },
+    active: () => {
+      updateEditorParams();
+      updateOutputArea();
+    }
+  });
+}
+
+
 function updateOutputArea() {
   let $messages = $('.edit-area .messages');
   $messages.empty();
@@ -163,6 +189,7 @@ function updateOutputArea() {
   let $pre = $('<pre>')
       .addClass('prettyprint')
       .css({
+        'font-family': config.font,
         'font-size': `${config.typeSize}px`,
         'background': 'transparent',
       })

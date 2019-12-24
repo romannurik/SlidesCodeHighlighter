@@ -74,13 +74,26 @@ body {
   align-items: center;
 
   label {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 16px;
-    color: rgba(#fff, .7);
-    margin-right: 16px;
+    color: rgba(#fff, .6);
+    margin-right: 8px;
     display: flex;
     flex-direction: row;
     align-items: baseline;
+    position: relative;
+
+    &:focus-within {
+      color: material-color('blue-grey', '400');
+    }
+
+    > span {
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      z-index: 1;
+      pointer-events: none;
+    }
   }
 
   select,
@@ -92,9 +105,8 @@ body {
     font-family: Roboto;
     font-size: 14px;
     line-height: 20px;
-    padding: 4px 8px;
+    padding: 24px 8px 4px 8px;
     outline: 0;
-    margin-left: 8px;
     border-radius: 4px;
 
     &:focus {
@@ -126,8 +138,16 @@ body {
     }
   }
 
+  #tab-size {
+    width: 80px;
+  }
+
   #type-size {
-    width: 40px;
+    width: 60px;
+  }
+
+  #selection-treatment {
+    width: 148px;
   }
 
   .select-wrapper {

@@ -86,6 +86,7 @@ gulp.task('copy', () => {
     'node_modules/ace-builds/src-min-noconflict/ace.js',
     'node_modules/ace-builds/src-min-noconflict/mode-text.js',
     'node_modules/ace-builds/src-min-noconflict/theme-chrome.js',
+    'node_modules/webfontloader/webfontloader.js',
 
     // icons
     'images/**/*.png'

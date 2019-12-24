@@ -13,7 +13,7 @@
     <div class="title-bar">Paste code below</div>
     <div class="toolbar">
       <label>
-        Language
+        <span>Language</span>
         <div class="select-wrapper">
           <select id="lang">
             <option value="--">(auto detect language)</option>
@@ -41,7 +41,7 @@
       </label>
 
       <label>
-        Tab size
+        <span>Tab size</span>
         <div class="select-wrapper">
           <select id="tab-size">
             <option value="2">2</option>
@@ -57,7 +57,7 @@
     <div class="title-bar">Copy the formatted code below</div>
     <div class="toolbar">
       <label>
-        Theme
+        <span>Theme</span>
         <div class="select-wrapper">
           <select id="theme">
             <option value="light">Light</option>
@@ -74,12 +74,41 @@
       </label>
 
       <label>
-        Type size
+        <span>Font</span>
+        <div class="select-wrapper">
+          <select id="font">
+            <option value="Anonymous Pro">Anonymous Pro</option>
+            <option value="B612 Mono">B612 Mono</option>
+            <option value="Courier Prime">Courier Prime</option>
+            <option value="Cousine">Cousine</option>
+            <option value="Cutive Mono">Cutive Mono</option>
+            <option value="Fira Code">Fira Code</option>
+            <option value="Fira Mono">Fira Mono</option>
+            <option value="IBM Plex Mono">IBM Plex Mono</option>
+            <option value="Inconsolata">Inconsolata</option>
+            <option value="Major Mono Display">Major Mono Display</option>
+            <option value="Nanum Gothic Coding">Nanum Gothic Coding</option>
+            <option value="Nova Mono">Nova Mono</option>
+            <option value="Overpass Mono">Overpass Mono</option>
+            <option value="Oxygen Mono">Oxygen Mono</option>
+            <option value="PT Mono">PT Mono</option>
+            <option value="Roboto Mono">Roboto Mono</option>
+            <option value="Share Tech Mono">Share Tech Mono</option>
+            <option value="Source Code Pro">Source Code Pro</option>
+            <option value="Space Mono">Space Mono</option>
+            <option value="Ubuntu Mono">Ubuntu Mono</option>
+            <option value="VT323">VT323</option>
+          </select>
+        </div>
+      </label>
+
+      <label>
+        <span>Type size</span>
         <input id="type-size" value="40">
       </label>
 
       <label>
-        Selected text (Beta)
+        <span>Selected text (Beta)</span>
         <div class="select-wrapper">
           <select id="selection-treatment">
             <option value="--">Do nothing</option>
@@ -111,6 +140,7 @@
   <script src="prettify.js"></script>
   <script src="prettify-languages.js"></script>
   <script src="ace.js"></script>
+  <script src="webfontloader.js"></script>
   <script type="module" src="material-colors.js"></script>
   <script type="module" src="themes.js"></script>
   <script type="module" src="index.js"></script>

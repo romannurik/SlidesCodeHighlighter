@@ -27,9 +27,9 @@ export const THEME_PROPERTIES = [
   { id: 'typeColor', name: 'Types' },
   { id: 'numberColor', name: 'Numbers' },
   { id: 'declarationColor', name: 'Declarations' },
-  { id: 'dimmedColor', name: 'Selection mode - dimmed text' },
-  { id: 'highlightColor', name: 'Highlighted text (soe modes)' },
-  { id: 'lineHeight', name: 'Line height' },
+  { id: 'dimmedColor', name: 'Selection: Unfocused' },
+  { id: 'highlightColor', name: 'Selection: Highlighter' },
+  // { id: 'lineHeight', name: 'Line height' },
 ];
 
 const CLS_PLAIN_TEXT = ['pln'];
