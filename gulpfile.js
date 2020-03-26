@@ -113,37 +113,29 @@ gulp.task('clean', cb => {
   cb();
 });
 
-gulp.task('serve', (cb) => {
-  DEV_MODE = true;
-  runSequence('__serve__', cb);
-});
 
-gulp.task('__serve__', ['build'], () => {
-
-  browserSync({
-    notify: false,
-    server: {
-      baseDir: ['dist']
-    }
-  });
-
-  gulp.watch(['*.{html,js}'], ['copy', browserSync.reload]);
-  gulp.watch(['*.scss'], ['styles', browserSync.reload]);
-});
-
-
-gulp.task('build', cb => {
-  runSequence(
-      ['styles'],
-      ['prettify-languages', 'copy'],
-      'service-worker',
-      cb);
-});
-
+gulp.task('build', gulp.series('styles', 'prettify-languages', 'copy', 'service-worker'));
 
 gulp.task('deploy', cb => {
   ghpages.publish(path.join(process.cwd(), 'dist'), cb);
 });
 
 
-gulp.task('default', ['clean', 'build']);
+gulp.task('default', gulp.series('clean', 'build'));
+
+gulp.task('serve', gulp.series('build', () => {
+  DEV_MODE = true;
+  browserSync({
+    notify: false,
+    server: {
+      baseDir: ['dist']
+    }
+  });
+  gulp.watch(['*.{html,js}'], gulp.series('copy', () => {
+    browserSync.reload
+  }));
+  gulp.watch(['*.scss'], gulp.series('styles', () => {
+    browserSync.reload
+  }));
+}));
+
