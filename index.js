@@ -199,13 +199,15 @@ function updateOutputArea() {
         'font-size': `${config.typeSize}px`,
         'background': 'transparent',
       })
-      .text(cleanupCode(config.code).code)
+      // .text(cleanupCode(config.code).code)
       .appendTo($output);
   if (config.lang != '--') {
     $pre.addClass(`lang-${config.lang}`);
   }
 
-  prettyPrint();
+  let html = Prism.highlight(cleanupCode(config.code).code,
+      Prism.languages[config.lang], config.lang);
+  $pre.html(html);
   highlightSelection();
 
   // find width by measuring the longest line

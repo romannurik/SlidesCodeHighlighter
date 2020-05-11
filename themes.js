@@ -16,7 +16,6 @@
 
 import {materialColor} from './material-colors.js';
 
-
 export const THEME_PROPERTIES = [
   { id: 'bgColor', name: 'Background' },
   { id: 'textColor', name: 'Plain text' },
@@ -63,6 +62,72 @@ export function setTheme(theme, typeSize) {
     #output::after {
       /* to avoid background color being copied to clipboard */
       background-color: ${bgColor};
+    }
+    #output {
+      color: ${textColor};
+    }
+
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: ${commentColor};
+    }
+    
+    .token.namespace {
+      opacity: .7;
+    }
+    
+    .token.string,
+    .token.regex,
+    .token.attr-value {
+      color: ${stringAndValueColor};
+    }
+    
+    .token.punctuation,
+    .token.operator {
+      color: ${punctuationColor};
+    }
+    
+    .token.entity,
+    .token.url,
+    .token.symbol,
+    .token.number,
+    .token.variable,
+    .token.constant,
+    .token.inserted {
+      color: ${numberColor};
+    }
+    
+    .token.atrule,
+    .token.class-name,
+    .token.attr-name,
+    .token.selector,
+    .language-autohotkey .token.selector {
+      color: ${typeColor};
+    }
+    
+    .token.deleted,
+    .token.property,
+    .token.boolean,
+    .token.keyword,
+    .token.tag,
+    .language-autohotkey .token.keyword,
+    .language-autohotkey .token.tag {
+      color: ${keywordTagColor};
+    }
+    
+    .token.important,
+    .token.function {
+      color: ${declarationColor};
+    }
+    
+    .token.bold {
+      font-weight: bold;
+    }
+    
+    .token.italic {
+      font-style: italic;
     }
 
     ${sel(CLS_PLAIN_TEXT)} { color: ${textColor}; }
