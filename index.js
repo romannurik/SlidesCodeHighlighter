@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {setTheme, DEFAULT_THEMES, THEME_PROPERTIES} from './themes.js';
+import {DEFAULT_THEMES, THEME_PROPERTIES, setTheme} from './themes.js';
 
 const WARN_LINES = 15;
 const WARN_LINE_LENGTH = 80;
@@ -260,11 +260,11 @@ function highlightSelection() {
   $output.attr('data-seltreat', config.selectionTreatment);
 
   let rawCode = config.code;
-  let {code, commonIndent} = cleanupCode(rawCode);
+  let {code, commonIndent, leadingEmptyLines} = cleanupCode(rawCode);
   let preRoot = $output.find('pre').get(0);
 
   let rangeToCharPos = ({row, column}) => code.split(/\n/)
-      .slice(0, row)
+      .slice(0, row - leadingEmptyLines)
       .reduce((a, r) => a + r.length + 1, 0)
       + Math.max(0,
           ((rawCode.split(/\n/)[row] || '').substring(0, column).match(/\t/g) || []).length
@@ -318,34 +318,58 @@ function highlightSelection() {
 
 
 function cleanupCode(code) {
+  let lines = code.split('\n');
+
+  // Remove leading and trailing empty lines
+  let leadingEmptyLines = 0;
+  for (let line of lines) {
+    if (line.match(/^\s*$/)) {
+      ++leadingEmptyLines;
+    } else {
+      break;
+    }
+  }
+
+  let trailingEmptyLines = 0;
+  for (let line of [...lines].reverse()) {
+    if (line.match(/^\s*$/)) {
+      ++trailingEmptyLines;
+    } else {
+      break;
+    }
+  }
+
+  if (leadingEmptyLines == lines.length) {
+    trailingEmptyLines = 0;
+  }
+
+  lines = lines.slice(leadingEmptyLines, lines.length - trailingEmptyLines);
+
   // Tabs to 4 spaces
-  code = code.replace(/\t/g, ' '.repeat(config.tabSize));
+  lines = lines.map(line => line.replace(/\t/g, ' '.repeat(config.tabSize)));
 
   // Remove trailing whitespace
-  code = code.replace(/ +\n/g, '\n');
+  lines = lines.map(line => line.replace(/ +$/g, ''));
 
   // Remove common indent
   let commonIndent = -1;
-  let lines = code.split('\n');
-  lines.forEach(line => {
+  for (let line of lines) {
     if (!$.trim(line)) {
-      return;
+      continue;
     }
 
     let indent = line.match(/^\s*/)[0].length;
     if (indent < commonIndent || commonIndent == -1) {
       commonIndent = indent;
     }
-  });
-
-  if (commonIndent > 0) {
-    code = code
-        .split('\n')
-        .map(line => line.substring(commonIndent))
-        .join('\n');
   }
 
-  return {code, commonIndent};
+  if (commonIndent > 0) {
+    lines = lines.map(line => line.substring(commonIndent));
+  }
+
+  code = lines.join('\n');
+  return {code, commonIndent, leadingEmptyLines, trailingEmptyLines};
 }
 
 
