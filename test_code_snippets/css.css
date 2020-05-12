@@ -7,5 +7,5 @@ html {
 
 .foo #foo[foo="foo"] > * > div + div {
   /* a comment */
-  color: blue;
+  color: blue !important;
 }

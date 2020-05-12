@@ -25,13 +25,17 @@ const $output = $('#output');
 let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
-  lang: localStorage.highlighterLang || '--',
+  lang: localStorage.highlighterLang || '(auto)',
   font: localStorage.highlighterFont || 'Roboto Mono',
   tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
   selectionTreatment: localStorage.highlighterSelectionTreatment || '--',
   customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
+
+if (config.lang == '--') {
+  config.lang = '(auto)';
+}
 
 let editor;
 
@@ -102,6 +106,13 @@ function setupToolbar() {
         localStorage.highlighterLang = config.lang = $(ev.target).val();
         updateOutputArea();
       });
+
+  let $dl = $('#lang-datalist');
+  let langs = Object.keys(Prism.languages)
+      .filter(s => typeof Prism.languages[s] == 'object');
+  for (let lang of langs) {
+    $dl.append($('<option>').attr('value', lang));
+  }
 
   $('#tab-size')
       .val(config.tabSize)
@@ -201,12 +212,20 @@ function updateOutputArea() {
       })
       // .text(cleanupCode(config.code).code)
       .appendTo($output);
-  if (config.lang != '--') {
-    $pre.addClass(`lang-${config.lang}`);
+  let lang = config.lang;
+  if (lang == '(auto)') {
+    lang = /\s*</.test(config.code) ? 'markup' : 'js';
   }
 
+  if (!Prism.languages[lang]) {
+    $('#lang').addClass('is-invalid');
+    return;
+  }
+
+  $('#lang').removeClass('is-invalid');
+
   let html = Prism.highlight(cleanupCode(config.code).code,
-      Prism.languages[config.lang], config.lang);
+      Prism.languages[lang], lang);
   $pre.html(html);
   highlightSelection();
 
@@ -305,7 +324,9 @@ function highlightSelection() {
           }
 
           let f = document.createElement(tag);
-          f.className = child.className;
+          if (child.className) {
+            f.className = child.className;
+          }
           f.innerHTML = htmlEscape(childContent.substring(start, end));
           return f;
         };
