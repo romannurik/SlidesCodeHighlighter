@@ -224,10 +224,16 @@ function updateOutputArea() {
 
   $('#lang').removeClass('is-invalid');
 
-  let html = Prism.highlight(cleanupCode(config.code).code,
+  let html = Prism.highlight(
+      cleanupCode(config.code).code,
       Prism.languages[lang], lang);
   $pre.html(html);
   highlightSelection();
+
+  // add line numbers
+  if (false) {
+    addLineNumbers();
+  }
 
   // find width by measuring the longest line
   let preWidth = Math.max(1, measureNaturalPreWidth($pre));
@@ -309,40 +315,66 @@ function highlightSelection() {
     hasHighlights = true;
 
     let childStartPos = 0;
-    for (let child of Array.from(preRoot.childNodes)) {
-      let childContent = child.textContent;
-      let childEndPos = childStartPos + childContent.length;
 
-      if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
-        // some overlap
-        let startInChild = Math.max(0, targetStartPos - childStartPos);
-        let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
+    let traverse_ = (parent, emptyClass = '') => {
+      for (let child of Array.from(parent.childNodes)) {
+        if (child.childNodes.length >= 2 ||
+          (child.childNodes.length >= 1
+            && child.childNodes[0].nodeType != 3 /* TEXT */)) {
+          // this is a complex element, traverse it instead of treating it
+          // as a leaf nodeS
+          traverse_(child, child.className);
+          continue;
+        }
 
-        let makeSub = (tag, start, end) => {
-          if (start == end) {
-            return null;
-          }
-
-          let f = document.createElement(tag);
-          if (child.className) {
-            f.className = child.className;
-          }
-          f.innerHTML = htmlEscape(childContent.substring(start, end));
-          return f;
-        };
-
-        child.replaceWith.apply(child, [
-          makeSub('span', 0, startInChild),
-          makeSub('mark', startInChild, endInChild),
-          makeSub('span', endInChild, childContent.length),
-        ].filter(s => !!s));
+        let childContent = child.textContent;
+        let childEndPos = childStartPos + childContent.length;
+  
+        if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
+          // some overlap
+          let startInChild = Math.max(0, targetStartPos - childStartPos);
+          let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
+  
+          let makeSub = (tag, start, end) => {
+            if (start == end) {
+              return null;
+            }
+  
+            let f = document.createElement(tag);
+            if (child.className) {
+              f.className = child.className;
+            } else if (emptyClass) {
+              f.className = emptyClass;
+            }
+            f.innerHTML = htmlEscape(childContent.substring(start, end));
+            return f;
+          };
+  
+          child.replaceWith.apply(child, [
+            makeSub('span', 0, startInChild),
+            makeSub('mark', startInChild, endInChild),
+            makeSub('span', endInChild, childContent.length),
+          ].filter(s => !!s));
+        }
+  
+        childStartPos = childEndPos;
       }
+    };
 
-      childStartPos = childEndPos;
-    }
+    traverse_(preRoot);
   }
 
   $output.toggleClass('has-highlights', hasHighlights);
+}
+
+function addLineNumbers() {
+  let $pre = $output.find('pre');
+  let htmlLines = $pre.html().split(/\n/);
+  $pre.html(htmlLines
+      .map((s, ind) => `<span style="color:grey">` +
+        String(ind + 1).padStart(Math.ceil((htmlLines.length + 1) / 10), ' ') +
+        `</span>  ${s}`)
+      .join('\n'));
 }
 
 
