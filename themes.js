@@ -16,7 +16,6 @@
 
 import {materialColor} from './material-colors.js';
 
-
 export const THEME_PROPERTIES = [
   { id: 'bgColor', name: 'Background' },
   { id: 'textColor', name: 'Plain text' },
@@ -32,18 +31,6 @@ export const THEME_PROPERTIES = [
   // { id: 'lineHeight', name: 'Line height' },
 ];
 
-const CLS_PLAIN_TEXT = ['pln'];
-const CLS_PUNCTUATION = ['pun', 'opn', 'clo']; // punc, lisp open bracket, lisp close bracket
-const CLS_STRING_VALUE = ['str', 'atv']; // string content and attribute value
-const CLS_KEYWORD_TAG = ['kwd', 'tag']; // keyword, html tag
-const CLS_COMMENT = ['com'];
-const CLS_TYPE = ['typ', 'atn']; // a type name or attribute name
-const CLS_LITERAL = ['lit']; // literal value
-const CLS_DECLARATION = ['dec', 'var']; // declaration (like doctype), variable name
-
-function sel(classes, extra = '') {
-  return classes.map(cls => `.${cls} ${extra}`).join(', ');
-}
 
 export function setTheme(theme, typeSize) {
   let {bgColor, textColor, punctuationColor, stringAndValueColor,
@@ -51,10 +38,14 @@ export function setTheme(theme, typeSize) {
        declarationColor, dimmedColor, highlightColor, lineHeight} = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
-    #output pre {
+    #output pre,
+    #output pre mark {
       line-height: ${lineHeight * typeSize}px;
+      color: ${textColor};
     }
-    #output.has-highlights[data-seltreat="focus"] pre > :not(mark) {
+    #output.has-highlights[data-seltreat="focus"] pre > :not(mark),
+    #output.has-highlights[data-seltreat="focus"] pre :not(mark),
+    #output.has-highlights[data-seltreat="focus"] pre {
       color: ${dimmedColor || 'grey'};
     }
     #output.has-highlights[data-seltreat="highlight"] pre mark {
@@ -65,14 +56,65 @@ export function setTheme(theme, typeSize) {
       background-color: ${bgColor};
     }
 
-    ${sel(CLS_PLAIN_TEXT)} { color: ${textColor}; }
-    ${sel(CLS_PUNCTUATION)} { color: ${punctuationColor}; }
-    ${sel(CLS_STRING_VALUE)} { color: ${stringAndValueColor}; }
-    ${sel(CLS_KEYWORD_TAG)} { color: ${keywordTagColor}; }
-    ${sel(CLS_COMMENT)} { color: ${commentColor}; }
-    ${sel(CLS_TYPE)} { color: ${typeColor}; }
-    ${sel(CLS_LITERAL)} { color: ${numberColor}; }
-    ${sel(CLS_DECLARATION)} { color: ${declarationColor}; }
+    #output pre .token.comment,
+    #output pre .token.prolog,
+    #output pre .token.doctype,
+    #output pre .token.cdata {
+      color: ${commentColor};
+    }
+    
+    #output pre .token.namespace {
+      opacity: .7;
+    }
+    
+    #output pre .token.string,
+    #output pre .token.regex,
+    #output pre .token.attr-value {
+      color: ${stringAndValueColor};
+    }
+    
+    #output pre .token.punctuation,
+    #output pre .token.operator {
+      color: ${punctuationColor};
+    }
+    
+    #output pre .token.entity,
+    #output pre .token.url,
+    #output pre .token.symbol,
+    #output pre .token.number,
+    #output pre .token.variable,
+    #output pre .token.constant,
+    #output pre .token.inserted {
+      color: ${numberColor};
+    }
+    
+    #output pre .token.atrule,
+    #output pre .token.class-name,
+    #output pre .token.attr-name,
+    #output pre .token.selector,
+    #output pre .token.builtin {
+      color: ${typeColor};
+    }
+    
+    #output pre .token.deleted,
+    #output pre .token.property,
+    #output pre .token.boolean,
+    #output pre .token.keyword,
+    #output pre .token.tag {
+      color: ${keywordTagColor};
+    }
+    
+    #output pre .token.important {
+      color: ${declarationColor};
+    }
+    
+    #output pre .token.bold {
+      font-weight: bold;
+    }
+    
+    #output pre .token.italic {
+      font-style: italic;
+    }
   `;
 
   $('[theme-rules]').remove();

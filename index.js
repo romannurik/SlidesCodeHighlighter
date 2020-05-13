@@ -25,13 +25,17 @@ const $output = $('#output');
 let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
-  lang: localStorage.highlighterLang || '--',
+  lang: localStorage.highlighterLang || '(auto)',
   font: localStorage.highlighterFont || 'Roboto Mono',
   tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
   selectionTreatment: localStorage.highlighterSelectionTreatment || '--',
   customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
+
+if (config.lang == '--') {
+  config.lang = '(auto)';
+}
 
 let editor;
 
@@ -102,6 +106,13 @@ function setupToolbar() {
         localStorage.highlighterLang = config.lang = $(ev.target).val();
         updateOutputArea();
       });
+
+  let $dl = $('#lang-datalist');
+  let langs = Object.keys(Prism.languages)
+      .filter(s => typeof Prism.languages[s] == 'object');
+  for (let lang of langs) {
+    $dl.append($('<option>').attr('value', lang));
+  }
 
   $('#tab-size')
       .val(config.tabSize)
@@ -199,14 +210,29 @@ function updateOutputArea() {
         'font-size': `${config.typeSize}px`,
         'background': 'transparent',
       })
-      .text(cleanupCode(config.code).code)
       .appendTo($output);
-  if (config.lang != '--') {
-    $pre.addClass(`lang-${config.lang}`);
+  let lang = config.lang;
+  if (lang == '(auto)') {
+    lang = /\s*</.test(config.code) ? 'markup' : 'js';
   }
 
-  prettyPrint();
+  if (!Prism.languages[lang]) {
+    $('#lang').addClass('is-invalid');
+    return;
+  }
+
+  $('#lang').removeClass('is-invalid');
+
+  let html = Prism.highlight(
+      cleanupCode(config.code).code,
+      Prism.languages[lang], lang);
+  $pre.html(html);
   highlightSelection();
+
+  // add line numbers
+  if (false) {
+    addLineNumbers();
+  }
 
   // find width by measuring the longest line
   let preWidth = Math.max(1, measureNaturalPreWidth($pre));
@@ -288,38 +314,66 @@ function highlightSelection() {
     hasHighlights = true;
 
     let childStartPos = 0;
-    for (let child of Array.from(preRoot.childNodes)) {
-      let childContent = child.textContent;
-      let childEndPos = childStartPos + childContent.length;
 
-      if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
-        // some overlap
-        let startInChild = Math.max(0, targetStartPos - childStartPos);
-        let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
+    let traverse_ = (parent, emptyClass = '') => {
+      for (let child of Array.from(parent.childNodes)) {
+        if (child.childNodes.length >= 2 ||
+          (child.childNodes.length >= 1
+            && child.childNodes[0].nodeType != 3 /* TEXT */)) {
+          // this is a complex element, traverse it instead of treating it
+          // as a leaf nodeS
+          traverse_(child, child.className);
+          continue;
+        }
 
-        let makeSub = (tag, start, end) => {
-          if (start == end) {
-            return null;
-          }
+        let childContent = child.textContent;
+        let childEndPos = childStartPos + childContent.length;
 
-          let f = document.createElement(tag);
-          f.className = child.className;
-          f.innerHTML = htmlEscape(childContent.substring(start, end));
-          return f;
-        };
+        if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
+          // some overlap
+          let startInChild = Math.max(0, targetStartPos - childStartPos);
+          let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
 
-        child.replaceWith.apply(child, [
-          makeSub('span', 0, startInChild),
-          makeSub('mark', startInChild, endInChild),
-          makeSub('span', endInChild, childContent.length),
-        ].filter(s => !!s));
+          let makeSub = (tag, start, end) => {
+            if (start == end) {
+              return null;
+            }
+
+            let f = document.createElement(tag);
+            if (child.className) {
+              f.className = child.className;
+            } else if (emptyClass) {
+              f.className = emptyClass;
+            }
+            f.innerHTML = htmlEscape(childContent.substring(start, end));
+            return f;
+          };
+
+          child.replaceWith.apply(child, [
+            makeSub('span', 0, startInChild),
+            makeSub('mark', startInChild, endInChild),
+            makeSub('span', endInChild, childContent.length),
+          ].filter(s => !!s));
+        }
+
+        childStartPos = childEndPos;
       }
+    };
 
-      childStartPos = childEndPos;
-    }
+    traverse_(preRoot);
   }
 
   $output.toggleClass('has-highlights', hasHighlights);
+}
+
+function addLineNumbers() {
+  let $pre = $output.find('pre');
+  let htmlLines = $pre.html().split(/\n/);
+  $pre.html(htmlLines
+      .map((s, ind) => `<span style="color:grey">` +
+        String(ind + 1).padStart(Math.ceil((htmlLines.length + 1) / 10), ' ') +
+        `</span>  ${s}`)
+      .join('\n'));
 }
 
 

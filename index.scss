@@ -114,6 +114,14 @@ body {
       background-color: #fff;
       color: material-color('blue-grey', '900');
     }
+
+    &.is-invalid {
+      color: material-color('red', '600');
+    }
+  }
+
+  input::-webkit-calendar-picker-indicator {
+    display: none;
   }
 
   button {
@@ -151,7 +159,8 @@ body {
     width: 148px;
   }
 
-  .select-wrapper {
+  .select-wrapper,
+  .input-datalist-wrapper {
     position: relative;
 
     select {
