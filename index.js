@@ -210,7 +210,6 @@ function updateOutputArea() {
         'font-size': `${config.typeSize}px`,
         'background': 'transparent',
       })
-      // .text(cleanupCode(config.code).code)
       .appendTo($output);
   let lang = config.lang;
   if (lang == '(auto)') {
@@ -329,17 +328,17 @@ function highlightSelection() {
 
         let childContent = child.textContent;
         let childEndPos = childStartPos + childContent.length;
-  
+
         if (targetStartPos < childEndPos && targetEndPos >= childStartPos) {
           // some overlap
           let startInChild = Math.max(0, targetStartPos - childStartPos);
           let endInChild = Math.min(childContent.length, childContent.length - (childEndPos - targetEndPos));
-  
+
           let makeSub = (tag, start, end) => {
             if (start == end) {
               return null;
             }
-  
+
             let f = document.createElement(tag);
             if (child.className) {
               f.className = child.className;
@@ -349,14 +348,14 @@ function highlightSelection() {
             f.innerHTML = htmlEscape(childContent.substring(start, end));
             return f;
           };
-  
+
           child.replaceWith.apply(child, [
             makeSub('span', 0, startInChild),
             makeSub('mark', startInChild, endInChild),
             makeSub('span', endInChild, childContent.length),
           ].filter(s => !!s));
         }
-  
+
         childStartPos = childEndPos;
       }
     };

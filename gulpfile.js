@@ -34,20 +34,6 @@ function errorHandler(error) {
 }
 
 
-gulp.task('prism-languages', cb => {
-  // return gulp.src([
-  //   'node_modules/prismjs/components/prism-core.min.js',
-  //   'node_modules/prismjs/components/prism-markup.min.js',
-  //   'node_modules/prismjs/components/prism-clike.min.js',
-  //   'node_modules/prismjs/components/prism-javascript.min.js',
-  //   'node_modules/prismjs/components/prism-!(core)*.min.js',
-  // ])
-  //     .pipe($.concat('prism-languages.js'))
-  //     .pipe(gulp.dest('dist'));
-  cb();
-});
-
-
 gulp.task('service-worker', () => {
   if (DEV_MODE) {
     return gulp.src('sw-dev.js')
@@ -88,9 +74,8 @@ gulp.task('copy', () => {
     'index.js',
 
     // libs
-    'node_modules/jquery/dist/jquery.min.js',
-    //'node_modules/prismjs/prism.js',
     'prism.js',
+    'node_modules/jquery/dist/jquery.min.js',
     'node_modules/ace-builds/src-min-noconflict/ace.js',
     'node_modules/ace-builds/src-min-noconflict/mode-text.js',
     'node_modules/ace-builds/src-min-noconflict/theme-chrome.js',
@@ -143,7 +128,7 @@ gulp.task('__serve__', ['build'], () => {
 gulp.task('build', cb => {
   runSequence(
       ['styles'],
-      ['prism-languages', 'copy'],
+      ['copy'],
       'service-worker',
       cb);
 });
