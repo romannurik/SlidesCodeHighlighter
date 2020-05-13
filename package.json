@@ -37,7 +37,7 @@
   "dependencies": {
     "ace-builds": "^1.4.1",
     "code-prettify": "git+https://github.com/google/code-prettify.git",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "webfontloader": "^1.6.28"
   }
 }
