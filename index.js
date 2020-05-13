@@ -57,6 +57,8 @@ function setupEditor() {
   if (navigator.userAgent.match(/iP(hone|od|ad)|Android/)) {
     // Ace editor is pretty busted on mobile, just use a <textarea>
     let $textArea = $('<textarea>')
+        .attr('autocapitalize', 'false')
+        .attr('spellcheck', 'false')
         .val(config.code)
         .on('input', () => updateCode_($textArea.val()))
         .appendTo($editor);
