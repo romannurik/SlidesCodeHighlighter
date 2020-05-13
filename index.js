@@ -49,6 +49,20 @@ installServiceWorker();
 
 
 function setupEditor() {
+  let updateCode_ = code => {
+    localStorage.highlighterCode = config.code = code;
+    updateOutputArea();
+  };
+
+  if (navigator.userAgent.match(/iP(hone|od|ad)|Android/)) {
+    // Ace editor is pretty busted on mobile, just use a <textarea>
+    let $textArea = $('<textarea>')
+        .val(config.code)
+        .on('input', () => updateCode_($textArea.val()))
+        .appendTo($editor);
+    return;
+  }
+
   editor = ace.edit($editor.get(0));
   editor.$blockScrolling = Infinity;
   editor.setValue(config.code, -1);
@@ -58,10 +72,7 @@ function setupEditor() {
     fontFamily: 'Roboto Mono',
     fontSize: '11pt',
   });
-  editor.on('change', () => {
-    localStorage.highlighterCode = config.code = editor.getValue();
-    updateOutputArea();
-  });
+  editor.on('change', () => updateCode_(editor.getValue()));
   editor.getSelection().on('changeCursor', () => updateOutputArea());
   editor.getSelection().on('changeSelection', () => updateOutputArea());
   updateEditorParams();
@@ -69,6 +80,10 @@ function setupEditor() {
 
 
 function updateEditorParams() {
+  if (!editor) {
+    return;
+  }
+
   editor.setOptions({
     fontFamily: config.font,
     fontSize: '11pt',
@@ -89,6 +104,7 @@ function setupOutputArea() {
 
   // re-layout on window resize
   $(window).on('resize', () => updateOutputArea());
+  document.fonts.ready.then(() => updateOutputArea());
 }
 
 
@@ -195,10 +211,10 @@ function updateOutputArea() {
 
   // set theme
   if (config.theme == 'custom') {
-    $('.custom-theme-area').show();
+    $('.custom-theme-area').css('display', 'flex');
     setTheme(config.customTheme, config.typeSize);
   } else {
-    $('.custom-theme-area').hide();
+    $('.custom-theme-area').css('display', 'none');
     setTheme(DEFAULT_THEMES[config.theme], config.typeSize);
   }
 
@@ -282,6 +298,10 @@ function updateOutputArea() {
 const htmlEscape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function highlightSelection() {
+  if (!editor) {
+    return;
+  }
+
   $output.removeClass('has-highlights');
   $output.removeAttr('data-seltreat');
 
@@ -461,6 +481,8 @@ function measureNaturalPreWidth(pre) {
 
 
 function setupCustomThemeEditor() {
+  let sanitize_ = s => s.replace(/^\s*|\s*$/g, '').toUpperCase();
+
   let rebuildCustomThemeProperties = () => {
     let $customThemeEditor = $('.custom-theme-editor').empty();
     for (let prop of THEME_PROPERTIES) {
@@ -469,11 +491,24 @@ function setupCustomThemeEditor() {
           .appendTo($customThemeEditor);
       let $label = $('<label>')
           .appendTo($prop);
-      let $input = $('<input>')
+      let hexColor = String(config.customTheme[prop.id] || '#000000').toUpperCase();
+      let $textInput, $colorInput;
+      $colorInput = $('<input>')
           .attr('type', 'color')
-          .val(config.customTheme[prop.id])
+          .val(hexColor)
           .on('input', () => {
-            config.customTheme[prop.id] = $input.val();
+            config.customTheme[prop.id] = sanitize_($colorInput.val());
+            $textInput.val(config.customTheme[prop.id]);
+            localStorage.customTheme = JSON.stringify(config.customTheme);
+            updateOutputArea();
+          })
+          .appendTo($label);
+      $textInput = $('<input>')
+          .attr('type', 'text')
+          .val(hexColor)
+          .on('input', () => {
+            config.customTheme[prop.id] = sanitize_($textInput.val());
+            $colorInput.val(config.customTheme[prop.id]);
             localStorage.customTheme = JSON.stringify(config.customTheme);
             updateOutputArea();
           })

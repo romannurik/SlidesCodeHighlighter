@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="index.css">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -16,6 +17,7 @@
         <span>Language</span>
         <div class="input-datalist-wrapper">
           <input id="lang" name="lang" list="lang-datalist"
+              type="text"
               spellcheck="false">
           <datalist id="lang-datalist">
             <option value="(auto)">
@@ -88,7 +90,7 @@
 
       <label>
         <span>Type size</span>
-        <input id="type-size" value="40">
+        <input type="text" id="type-size" value="40">
       </label>
 
       <label>

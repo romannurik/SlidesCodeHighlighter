@@ -17,6 +17,12 @@
 @import 'material-colors';
 @import 'jetbrains-mono';
 
+@mixin mobile {
+  @media only screen and (max-width: 500px) {
+    @content;
+  }
+}
+
 $thinBorderColor: rgba(#000, .12);
 
 html,
@@ -36,6 +42,10 @@ body {
   flex-direction: row;
   box-sizing: border-box;
   padding: 8px;
+
+  @include mobile {
+    flex-direction: column;
+  }
 }
 
 .edit-area,
@@ -49,6 +59,10 @@ body {
   box-shadow: 0 4px 8px rgba(#000, .2);
   border-radius: 4px;
   overflow: hidden;
+
+  @include mobile {
+    min-height: 400px;
+  }
 }
 
 .toolbar,
@@ -73,6 +87,11 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   label {
     font-size: 12px;
@@ -98,7 +117,7 @@ body {
   }
 
   select,
-  input {
+  input[type="text"] {
     -webkit-appearance: none;
     border: 0;
     background-color: material-color('blue-grey', '600');
@@ -147,6 +166,10 @@ body {
     }
   }
 
+  #lang {
+    width: 150px;
+  }
+
   #tab-size {
     width: 80px;
   }
@@ -193,6 +216,18 @@ body {
 #editor {
   flex: 1;
   margin-top: 8px;
+  position: relative;
+
+  textarea {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 0;
+    margin: 0;
+    overflow: scroll;
+    white-space: nowrap;
+  }
 }
 
 #output {
@@ -245,8 +280,40 @@ body {
   flex: 0 0 auto;
   display: none;
 
+  @include mobile {
+    flex: 1 0 0;
+  }
+
+  .toolbar {
+    .checkbox-label {
+      margin: 0 0 0 8px;
+    }
+  }
+
   .custom-theme-editor {
+    flex: 1 1 0;
+    overflow-y: auto;
     padding: 12px;
+
+    .custom-theme-prop {
+      input {
+        box-sizing: border-box;
+        height: 24px;
+      }
+
+      input[type="text"] {
+        width: 7em * 0.8;
+        padding: 4px;
+        font-family: monospace;
+        font-size: 11px;
+        display: none;
+      }
+
+      input[type="color"] {
+        width: 24px;
+        padding: 0;
+      }
+    }
   }
 
   label {
