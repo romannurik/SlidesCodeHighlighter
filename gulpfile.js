@@ -16,7 +16,6 @@
 
 const browserSync = require('browser-sync');
 const del = require('del');
-const runSequence = require('run-sequence');
 
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
@@ -106,13 +105,11 @@ gulp.task('clean', cb => {
   cb();
 });
 
-gulp.task('serve', (cb) => {
-  DEV_MODE = true;
-  runSequence('__serve__', cb);
-});
 
-gulp.task('__serve__', ['build'], () => {
+gulp.task('build', gulp.series('styles', 'copy', 'service-worker'));
 
+
+gulp.task('__serve__', gulp.series('build', () => {
   browserSync({
     notify: false,
     server: {
@@ -120,18 +117,13 @@ gulp.task('__serve__', ['build'], () => {
     }
   });
 
-  gulp.watch(['*.{html,js}'], ['copy', browserSync.reload]);
-  gulp.watch(['*.scss'], ['styles', browserSync.reload]);
-});
+  let reload = cb => { browserSync.reload(); cb(); };
+  gulp.watch(['*.{html,js}'], gulp.series('copy', reload));
+  gulp.watch(['*.scss'], gulp.series('styles', reload));
+}));
 
 
-gulp.task('build', cb => {
-  runSequence(
-      ['styles'],
-      ['copy'],
-      'service-worker',
-      cb);
-});
+gulp.task('serve', gulp.series(cb => { DEV_MODE = true; cb(); }, '__serve__'));
 
 
 gulp.task('deploy', cb => {
@@ -139,4 +131,4 @@ gulp.task('deploy', cb => {
 });
 
 
-gulp.task('default', ['clean', 'build']);
+gulp.task('default', gulp.series('clean', 'build'));
