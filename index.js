@@ -170,7 +170,7 @@ function setupToolbar() {
       .val(config.typeSize)
       .on('input', () => {
         let val = parseInt($typeSize.val(), 10);
-        if (!isNaN(val) && val > 8) {
+        if (!isNaN(val) && val > 4) {
           setTypeSize_(val);
         }
       })
