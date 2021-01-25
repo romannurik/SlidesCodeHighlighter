@@ -317,7 +317,7 @@ function highlightSelection() {
   let {code, commonIndent, leadingEmptyLines} = cleanupCode(rawCode);
   let preRoot = $output.find('pre').get(0);
 
-  let rangeToCharPos = ({row, column}) => code.split(/\n/)
+  let rangeToCharPos = ({row, column}) => code.split(/\r?\n/)
       .slice(0, row - leadingEmptyLines)
       .reduce((a, r) => a + r.length + 1, 0)
       + Math.max(0,
