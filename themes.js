@@ -239,5 +239,19 @@ export const DEFAULT_THEMES = {
     dimmedColor: "#87858e",
     highlightColor: '#425a6c',
     lineHeight: 1.2,
+  },
+  'angular-material': {
+    bgColor: "#382e42",
+    textColor: "#ffffff",
+    punctuationColor: materialColor('light-blue', '100'),
+    stringAndValueColor: "#c3e88d",
+    keywordTagColor: materialColor('light-blue', '100'),
+    commentColor: materialColor('grey', '500'),
+    typeColor: materialColor('orange', '200'),
+    numberColor: materialColor('purple', '200'),
+    declarationColor: materialColor('purple', '200'),
+    dimmedColor: "#4d4d4d",
+    highlightColor: "#4d3663",
+    lineHeight: 1.2
   }
 };
