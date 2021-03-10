@@ -187,12 +187,6 @@ function setupToolbar() {
 
 
 function loadFont() {
-  if (config.font == 'JetBrains Mono') {
-    updateEditorParams();
-    updateOutputArea();
-    return;
-  }
-
   WebFont.load({
     google: {
       families: [`${config.font}:400,700`]
