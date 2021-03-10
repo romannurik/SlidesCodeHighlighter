@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+  <title>SlidesCodeHighlighter</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500|Roboto+Mono:400,700">
+  <link rel="stylesheet" href="index.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <div class="edit-area">
+    <div class="title-bar">Paste code below</div>
+    <div class="toolbar">
+      <label>
+        <span>Language</span>
+        <div class="input-datalist-wrapper">
+          <input id="lang" name="lang" list="lang-datalist"
+              type="text"
+              autocapitalize="off"
+              spellcheck="false">
+          <datalist id="lang-datalist">
+            <option value="(auto)">
+          </datalist>
+        </div>
+      </label>
+
+      <label>
+        <span>Tab size</span>
+        <div class="select-wrapper">
+          <select id="tab-size">
+            <option value="2">2</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </label>
+    </div>
+    <div id="editor"></div>
+    <div class="messages"></div>
+  </div>
+  <div class="output-area">
+    <div class="title-bar">Copy the formatted code below</div>
+    <div class="toolbar">
+      <label>
+        <span>Theme</span>
+        <div class="select-wrapper">
+          <select id="theme">
+            <option value="light">Light</option>
+            <option value="light-alt">Light (alternate)</option>
+            <option value="dark">Dark</option>
+            <option value="dark-alt">Dark (alternate)</option>
+            <option value="design-dark">Dark (design)</option>
+            <option value="io17">#io17</option>
+            <option value="io19">#io19</option>
+            <option value="flutter-interact-19">Flutter Interact 2019</option>
+            <option value="angular-material">Angular Material</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+      </label>
+
+      <label>
+        <span>Font</span>
+        <div class="select-wrapper">
+          <select id="font">
+            <option value="Anonymous Pro">Anonymous Pro</option>
+            <option value="B612 Mono">B612 Mono</option>
+            <option value="Courier Prime">Courier Prime</option>
+            <option value="Cousine">Cousine</option>
+            <option value="Cutive Mono">Cutive Mono</option>
+            <option value="Fira Code">Fira Code</option>
+            <option value="Fira Mono">Fira Mono</option>
+            <option value="IBM Plex Mono">IBM Plex Mono</option>
+            <option value="Inconsolata">Inconsolata</option>
+            <option value="JetBrains Mono">JetBrains Mono</option>
+            <option value="Major Mono Display">Major Mono Display</option>
+            <option value="Nanum Gothic Coding">Nanum Gothic Coding</option>
+            <option value="Nova Mono">Nova Mono</option>
+            <option value="Overpass Mono">Overpass Mono</option>
+            <option value="Oxygen Mono">Oxygen Mono</option>
+            <option value="PT Mono">PT Mono</option>
+            <option value="Roboto Mono">Roboto Mono</option>
+            <option value="Share Tech Mono">Share Tech Mono</option>
+            <option value="Source Code Pro">Source Code Pro</option>
+            <option value="Space Mono">Space Mono</option>
+            <option value="Ubuntu Mono">Ubuntu Mono</option>
+            <option value="VT323">VT323</option>
+          </select>
+        </div>
+      </label>
+
+      <label>
+        <span>Type size</span>
+        <input type="text" id="type-size" value="40">
+      </label>
+
+      <label>
+        <span>Selected text (Beta)</span>
+        <div class="select-wrapper">
+          <select id="selection-treatment">
+            <option value="--">Do nothing</option>
+            <option value="focus">Focus</option>
+            <option value="bold">Bold</option>
+            <option value="highlight">Highlight</option>
+          </select>
+        </div>
+      </label>
+    </div>
+    <div id="output"></div>
+    <div class="messages">
+      <div class="message message-info">
+        For best results, copy from Safari with Keynote decks and from Chrome
+        with Google Slides decks.
+      </div>
+      <div class="message message-info message-bgcolor"></div>
+    </div>
+  </div>
+  <div class="custom-theme-area">
+    <div class="title-bar">Custom theme</div>
+    <div class="toolbar">
+      <button class="custom-theme-import-export">Import/export</button>
+    </div>
+    <div class="custom-theme-editor"></div>
+  </div>
+
+  <script src="jquery.min.js"></script>
+  <script src="prism.js"></script>
+  <script src="ace.js"></script>
+  <script src="webfontloader.js"></script>
+  <script type="module" src="material-colors.js"></script>
+  <script type="module" src="themes.js"></script>
+  <script type="module" src="index.js"></script>
+
+</body>
+</html>

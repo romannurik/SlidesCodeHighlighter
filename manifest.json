@@ -1,0 +1,26 @@
+{
+  "name": "SlidesCodeHighlighter",
+  "short_name": "SlidesCodeHighlighter",
+  "description": "A simple source code highlighter that pastes well in to Keynote and Google Slides.",
+  "icons": [
+    {
+      "src": "logo_144x144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "logo_192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo_512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "standalone",
+  "start_url": "/SlidesCodeHighlighter/",
+  "theme_color": "#607d8b",
+  "background_color": "#607d8b"
+}
