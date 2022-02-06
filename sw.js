@@ -52,7 +52,7 @@ self.__precacheManifest = [
   },
   {
     "url": "prism.js",
-    "revision": "0c68eddb0964928d00b37decc6d22ecb"
+    "revision": "9d460c42bfefb4ded3fedb6a81a3b987"
   },
   {
     "url": "theme-chrome.js",
