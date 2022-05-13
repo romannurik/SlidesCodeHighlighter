@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-import {materialColor} from './material-colors.js';
+import { materialColor } from './material-colors.js';
 
 export const THEME_PROPERTIES = [
-  { id: 'bgColor', name: 'Background' },
-  { id: 'textColor', name: 'Plain text' },
-  { id: 'punctuationColor', name: 'Punctuation' },
-  { id: 'stringAndValueColor', name: 'Strings, values' },
-  { id: 'keywordTagColor', name: 'Keywords, tags' },
-  { id: 'commentColor', name: 'Comments' },
-  { id: 'typeColor', name: 'Types' },
-  { id: 'numberColor', name: 'Numbers' },
-  { id: 'declarationColor', name: 'Declarations' },
-  { id: 'dimmedColor', name: 'Selection: Unfocused' },
-  { id: 'highlightColor', name: 'Selection: Highlighter' },
-  // { id: 'lineHeight', name: 'Line height' },
+  { short: 'b', id: 'bgColor', name: 'Background', type: 'color' },
+  { short: 't', id: 'textColor', name: 'Plain text', type: 'color' },
+  { short: 'p', id: 'punctuationColor', name: 'Punctuation', type: 'color' },
+  { short: 's', id: 'stringAndValueColor', name: 'Strings, values', type: 'color' },
+  { short: 'k', id: 'keywordTagColor', name: 'Keywords, tags', type: 'color' },
+  { short: 'c', id: 'commentColor', name: 'Comments', type: 'color' },
+  { short: 'y', id: 'typeColor', name: 'Types', type: 'color' },
+  { short: 'n', id: 'numberColor', name: 'Numbers', type: 'color' },
+  { short: 'd', id: 'declarationColor', name: 'Declarations', type: 'color' },
+  { short: 'i', id: 'dimmedColor', name: 'Selection: Unfocused', type: 'color' },
+  { short: 'h', id: 'highlightColor', name: 'Selection: Highlighter', type: 'color' },
+  { short: 'lh', id: 'lineHeight', name: 'Line height', hideEditor: true },
 ];
 
 
 export function setTheme(theme, typeSize) {
-  let {bgColor, textColor, punctuationColor, stringAndValueColor,
-       keywordTagColor, commentColor, typeColor, numberColor,
-       declarationColor, dimmedColor, highlightColor, lineHeight} = theme;
+  let { bgColor, textColor, punctuationColor, stringAndValueColor,
+    keywordTagColor, commentColor, typeColor, numberColor,
+    declarationColor, dimmedColor, highlightColor, lineHeight } = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
     #output pre,
@@ -120,9 +120,9 @@ export function setTheme(theme, typeSize) {
   $('[theme-rules]').remove();
 
   $('<style>')
-      .attr('theme-rules', true)
-      .text(css)
-      .appendTo(document.body);
+    .attr('theme-rules', true)
+    .text(css)
+    .appendTo(document.body);
   $('.message-bgcolor').text(`Set your background color to: ${bgColor.toUpperCase()}`);
 }
 

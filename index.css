@@ -83,6 +83,7 @@ body {
   z-index: 100;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   display: flex;
+  gap: 8px;
   flex-direction: row;
   align-items: center;
   overflow-x: auto; }
@@ -92,7 +93,6 @@ body {
     font-size: 12px;
     line-height: 16px;
     color: rgba(255, 255, 255, 0.6);
-    margin-right: 8px;
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -117,6 +117,9 @@ body {
     padding: 24px 8px 4px 8px;
     outline: 0;
     border-radius: 4px; }
+    .toolbar select::placeholder,
+    .toolbar input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.7); }
     .toolbar select:focus,
     .toolbar input[type="text"]:focus {
       background-color: #fff;
@@ -125,7 +128,7 @@ body {
     .toolbar input[type="text"].is-invalid {
       color: #e53935; }
   .toolbar input::-webkit-calendar-picker-indicator {
-    display: none; }
+    display: none !important; }
   .toolbar button {
     -webkit-appearance: none;
     border: 0;
@@ -143,7 +146,8 @@ body {
     .toolbar button:active {
       background-color: #78909c; }
   .toolbar #lang {
-    width: 150px; }
+    width: 150px;
+    appearance: none; }
   .toolbar #tab-size {
     width: 80px; }
   .toolbar #type-size {
@@ -231,16 +235,26 @@ body {
     padding: 12px; }
     .custom-theme-area .custom-theme-editor .custom-theme-prop input {
       box-sizing: border-box;
-      height: 24px; }
+      height: 24px;
+      border: 1px solid rgba(0, 0, 0, 0.12); }
+      .custom-theme-area .custom-theme-editor .custom-theme-prop input:focus {
+        z-index: 1; }
+    .custom-theme-area .custom-theme-editor .custom-theme-prop input[type="color"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: none;
+      border-right: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      width: 24px;
+      padding: 0; }
     .custom-theme-area .custom-theme-editor .custom-theme-prop input[type="text"] {
       width: 5.6em;
       padding: 4px;
-      font-family: monospace;
+      font-family: Monaco, Menlo, monospace;
       font-size: 11px;
-      display: none; }
-    .custom-theme-area .custom-theme-editor .custom-theme-prop input[type="color"] {
-      width: 24px;
-      padding: 0; }
+      border-left: none; }
   .custom-theme-area label {
     display: flex;
     align-items: center;
@@ -248,16 +262,6 @@ body {
     margin: 0 0 8px; }
     .custom-theme-area label span {
       margin-left: 8px; }
-  .custom-theme-area input[type=color] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: none;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    width: 6em;
-    font-family: 'Roboto Mono'; }
 
 .messages {
   flex: 0 0 auto; }
