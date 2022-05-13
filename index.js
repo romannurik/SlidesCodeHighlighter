@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {DEFAULT_THEMES, THEME_PROPERTIES, setTheme} from './themes.js';
+import { DEFAULT_THEMES, setTheme, THEME_PROPERTIES } from './themes.js';
 
 const WARN_LINES = 15;
 const WARN_LINE_LENGTH = 80;
@@ -57,11 +57,11 @@ function setupEditor() {
   if (navigator.userAgent.match(/iP(hone|od|ad)|Android/)) {
     // Ace editor is pretty busted on mobile, just use a <textarea>
     let $textArea = $('<textarea>')
-        .attr('autocapitalize', 'off')
-        .attr('spellcheck', 'false')
-        .val(config.code)
-        .on('input', () => updateCode_($textArea.val()))
-        .appendTo($editor);
+      .attr('autocapitalize', 'off')
+      .attr('spellcheck', 'false')
+      .val(config.code)
+      .on('input', () => updateCode_($textArea.val()))
+      .appendTo($editor);
     return;
   }
 
@@ -112,48 +112,48 @@ function setupOutputArea() {
 
 function setupToolbar() {
   $('#theme')
-      .val(config.theme)
-      .on('input', ev => {
-        localStorage.highlighterTheme = config.theme = $(ev.target).val();
-        updateOutputArea();
-      });
+    .val(config.theme)
+    .on('input', ev => {
+      localStorage.highlighterTheme = config.theme = $(ev.target).val();
+      updateOutputArea();
+    });
 
   $('#lang')
-      .val(config.lang)
-      .on('input', ev => {
-        localStorage.highlighterLang = config.lang = $(ev.target).val();
-        updateOutputArea();
-      });
+    .val(config.lang)
+    .on('input', ev => {
+      localStorage.highlighterLang = config.lang = $(ev.target).val();
+      updateOutputArea();
+    });
 
   let $dl = $('#lang-datalist');
   let langs = Object.keys(Prism.languages)
-      .filter(s => typeof Prism.languages[s] == 'object');
+    .filter(s => typeof Prism.languages[s] == 'object');
   for (let lang of langs) {
     $dl.append($('<option>').attr('value', lang));
   }
 
   $('#tab-size')
-      .val(config.tabSize)
-      .on('input', ev => {
-        localStorage.highlighterTabSize = $(ev.target).val();
-        config.tabSize = Number(localStorage.highlighterTabSize);
-        updateEditorParams();
-        updateOutputArea();
-      });
+    .val(config.tabSize)
+    .on('input', ev => {
+      localStorage.highlighterTabSize = $(ev.target).val();
+      config.tabSize = Number(localStorage.highlighterTabSize);
+      updateEditorParams();
+      updateOutputArea();
+    });
 
   $('#font')
-      .val(config.font)
-      .on('input', ev => {
-        localStorage.highlighterFont = config.font = $(ev.target).val();
-        loadFont();
-      });
+    .val(config.font)
+    .on('input', ev => {
+      localStorage.highlighterFont = config.font = $(ev.target).val();
+      loadFont();
+    });
 
   $('#selection-treatment')
-      .val(config.selectionTreatment)
-      .on('input', ev => {
-        localStorage.highlighterSelectionTreatment = config.selectionTreatment = $(ev.target).val();
-        updateOutputArea();
-      });
+    .val(config.selectionTreatment)
+    .on('input', ev => {
+      localStorage.highlighterSelectionTreatment = config.selectionTreatment = $(ev.target).val();
+      updateOutputArea();
+    });
 
   let $typeSize = $('#type-size');
 
@@ -167,22 +167,22 @@ function setupToolbar() {
   };
 
   $typeSize
-      .val(config.typeSize)
-      .on('input', () => {
-        let val = parseInt($typeSize.val(), 10);
-        if (!isNaN(val) && val > 4) {
-          setTypeSize_(val);
+    .val(config.typeSize)
+    .on('input', () => {
+      let val = parseInt($typeSize.val(), 10);
+      if (!isNaN(val) && val > 4) {
+        setTypeSize_(val);
+      }
+    })
+    .on('keydown', ev => {
+      if (!ev.shiftKey) {
+        if (ev.keyCode == 38 || ev.keyCode == 40) {
+          setTypeSize_(parseInt($typeSize.val(), 10) + (ev.keyCode == 38 ? 1 : -1));
+          ev.preventDefault();
         }
-      })
-      .on('keydown', ev => {
-        if (!ev.shiftKey) {
-          if (ev.keyCode == 38 || ev.keyCode == 40) {
-            setTypeSize_(parseInt($typeSize.val(), 10) + (ev.keyCode == 38 ? 1 : -1));
-            ev.preventDefault();
-          }
-        }
-      })
-      .on('blur', ev => setTypeSize_(config.typeSize));
+      }
+    })
+    .on('blur', ev => setTypeSize_(config.typeSize));
 }
 
 
@@ -216,13 +216,13 @@ function updateOutputArea() {
 
   // build pre element
   let $pre = $('<pre>')
-      .addClass('prettyprint')
-      .css({
-        'font-family': config.font,
-        'font-size': `${config.typeSize}px`,
-        'background': 'transparent',
-      })
-      .appendTo($output);
+    .addClass('prettyprint')
+    .css({
+      'font-family': config.font,
+      'font-size': `${config.typeSize}px`,
+      'background': 'transparent',
+    })
+    .appendTo($output);
   let lang = config.lang;
   if (lang == '(auto)') {
     lang = /\s*</.test(config.code) ? 'markup' : 'js';
@@ -236,8 +236,8 @@ function updateOutputArea() {
   $('#lang').removeClass('is-invalid');
 
   let html = Prism.highlight(
-      cleanupCode(config.code).code,
-      Prism.languages[lang], lang);
+    cleanupCode(config.code).code,
+    Prism.languages[lang], lang);
   $pre.html(html);
   highlightSelection();
 
@@ -252,8 +252,8 @@ function updateOutputArea() {
 
   // center and scale the pre in the output area
   let scale = Math.min(1, Math.min(
-      $output.width() / preWidth,
-      $output.height() / preHeight));
+    $output.width() / preWidth,
+    $output.height() / preHeight));
   $pre.css({
     width: preWidth,
     transform: `translate(-50%, -50%) scale(${scale})`
@@ -284,11 +284,11 @@ function updateOutputArea() {
     }
   }
 
-  messages.forEach(({type, message}) =>
-      $('<div>')
-          .addClass(`message message-${type}`)
-          .text(message)
-          .appendTo($messages));
+  messages.forEach(({ type, message }) =>
+    $('<div>')
+      .addClass(`message message-${type}`)
+      .text(message)
+      .appendTo($messages));
 }
 
 const htmlEscape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -308,16 +308,16 @@ function highlightSelection() {
   $output.attr('data-seltreat', config.selectionTreatment);
 
   let rawCode = config.code;
-  let {code, commonIndent, leadingEmptyLines} = cleanupCode(rawCode);
+  let { code, commonIndent, leadingEmptyLines } = cleanupCode(rawCode);
   let preRoot = $output.find('pre').get(0);
 
-  let rangeToCharPos = ({row, column}) => code.split(/\r?\n/)
-      .slice(0, row - leadingEmptyLines)
-      .reduce((a, r) => a + r.length + 1, 0)
-      + Math.max(0,
-          ((rawCode.split(/\n/)[row] || '').substring(0, column).match(/\t/g) || []).length
-            * (config.tabSize - 1)
-          + column - commonIndent);
+  let rangeToCharPos = ({ row, column }) => code.split(/\r?\n/)
+    .slice(0, row - leadingEmptyLines)
+    .reduce((a, r) => a + r.length + 1, 0)
+    + Math.max(0,
+      ((rawCode.split(/\n/)[row] || '').substring(0, column).match(/\t/g) || []).length
+      * (config.tabSize - 1)
+      + column - commonIndent);
 
   let hasHighlights = false;
   for (let range of editor.getSelection().getAllRanges()) {
@@ -386,10 +386,10 @@ function addLineNumbers() {
   let $pre = $output.find('pre');
   let htmlLines = $pre.html().split(/\n/);
   $pre.html(htmlLines
-      .map((s, ind) => `<span style="color:grey">` +
-        String(ind + 1).padStart(Math.ceil((htmlLines.length + 1) / 10), ' ') +
-        `</span>  ${s}`)
-      .join('\n'));
+    .map((s, ind) => `<span style="color:grey">` +
+      String(ind + 1).padStart(Math.ceil((htmlLines.length + 1) / 10), ' ') +
+      `</span>  ${s}`)
+    .join('\n'));
 }
 
 
@@ -445,7 +445,7 @@ function cleanupCode(code) {
   }
 
   code = lines.join('\n');
-  return {code, commonIndent, leadingEmptyLines, trailingEmptyLines};
+  return { code, commonIndent, leadingEmptyLines, trailingEmptyLines };
 }
 
 
@@ -454,21 +454,21 @@ function measureNaturalPreWidth(pre) {
   // the length of its longest line
   let $pre = $(pre);
   let longestLine = $pre.text()
-      .split('\n')
-      .reduce((longest, line) => (longest.length > line.length) ? longest : line, '');
+    .split('\n')
+    .reduce((longest, line) => (longest.length > line.length) ? longest : line, '');
 
   let $preClone = $pre
-      .clone()
-      .css({
-        position: 'fixed',
-        left: -10000,
-        top: 0,
-        display: 'inline-block',
-        width: 'auto',
-        height: 'auto',
-      })
-      .text(longestLine)
-      .appendTo(document.body);
+    .clone()
+    .css({
+      position: 'fixed',
+      left: -10000,
+      top: 0,
+      display: 'inline-block',
+      width: 'auto',
+      height: 'auto',
+    })
+    .text(longestLine)
+    .appendTo(document.body);
 
   let naturalWidth = $preClone.width();
   $preClone.remove();
@@ -483,32 +483,32 @@ function setupCustomThemeEditor() {
     let $customThemeEditor = $('.custom-theme-editor').empty();
     for (let prop of THEME_PROPERTIES) {
       let $prop = $('<div>')
-          .addClass('custom-theme-prop')
-          .appendTo($customThemeEditor);
+        .addClass('custom-theme-prop')
+        .appendTo($customThemeEditor);
       let $label = $('<label>')
-          .appendTo($prop);
+        .appendTo($prop);
       let hexColor = String(config.customTheme[prop.id] || '#000000').toUpperCase();
       let $textInput, $colorInput;
       $colorInput = $('<input>')
-          .attr('type', 'color')
-          .val(hexColor)
-          .on('input', () => {
-            config.customTheme[prop.id] = sanitize_($colorInput.val());
-            $textInput.val(config.customTheme[prop.id]);
-            localStorage.customTheme = JSON.stringify(config.customTheme);
-            updateOutputArea();
-          })
-          .appendTo($label);
+        .attr('type', 'color')
+        .val(hexColor)
+        .on('input', () => {
+          config.customTheme[prop.id] = sanitize_($colorInput.val());
+          $textInput.val(config.customTheme[prop.id]);
+          localStorage.customTheme = JSON.stringify(config.customTheme);
+          updateOutputArea();
+        })
+        .appendTo($label);
       $textInput = $('<input>')
-          .attr('type', 'text')
-          .val(hexColor)
-          .on('input', () => {
-            config.customTheme[prop.id] = sanitize_($textInput.val());
-            $colorInput.val(config.customTheme[prop.id]);
-            localStorage.customTheme = JSON.stringify(config.customTheme);
-            updateOutputArea();
-          })
-          .appendTo($label);
+        .attr('type', 'text')
+        .val(hexColor)
+        .on('input', () => {
+          config.customTheme[prop.id] = sanitize_($textInput.val());
+          $colorInput.val(config.customTheme[prop.id]);
+          localStorage.customTheme = JSON.stringify(config.customTheme);
+          updateOutputArea();
+        })
+        .appendTo($label);
       $label.append(`<span>${prop.name}</span>`); // text
     }
   }
@@ -518,7 +518,7 @@ function setupCustomThemeEditor() {
   $('.custom-theme-import-export').click(() => {
     let currentJSON = JSON.stringify(config.customTheme);
     let newJSON = window.prompt(
-        'Copy the below JSON or paste new JSON for your custom theme.', currentJSON);
+      'Copy the below JSON or paste new JSON for your custom theme.', currentJSON);
     if (newJSON && newJSON != currentJSON) {
       try {
         config.customTheme = Object.assign({}, DEFAULT_THEMES['light'], JSON.parse(newJSON) || {});

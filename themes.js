@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {materialColor} from './material-colors.js';
+import { materialColor } from './material-colors.js';
 
 export const THEME_PROPERTIES = [
   { id: 'bgColor', name: 'Background' },
@@ -33,9 +33,9 @@ export const THEME_PROPERTIES = [
 
 
 export function setTheme(theme, typeSize) {
-  let {bgColor, textColor, punctuationColor, stringAndValueColor,
-       keywordTagColor, commentColor, typeColor, numberColor,
-       declarationColor, dimmedColor, highlightColor, lineHeight} = theme;
+  let { bgColor, textColor, punctuationColor, stringAndValueColor,
+    keywordTagColor, commentColor, typeColor, numberColor,
+    declarationColor, dimmedColor, highlightColor, lineHeight } = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
     #output pre,
@@ -120,9 +120,9 @@ export function setTheme(theme, typeSize) {
   $('[theme-rules]').remove();
 
   $('<style>')
-      .attr('theme-rules', true)
-      .text(css)
-      .appendTo(document.body);
+    .attr('theme-rules', true)
+    .text(css)
+    .appendTo(document.body);
   $('.message-bgcolor').text(`Set your background color to: ${bgColor.toUpperCase()}`);
 }
 
