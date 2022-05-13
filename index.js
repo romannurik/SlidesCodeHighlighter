@@ -25,7 +25,7 @@ const $output = $('#output');
 let config = {
   code: localStorage.highlighterCode || '',
   theme: localStorage.highlighterTheme || 'light',
-  lang: localStorage.highlighterLang || '(auto)',
+  lang: localStorage.highlighterLang || '',
   font: localStorage.highlighterFont || 'Roboto Mono',
   tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
@@ -34,7 +34,7 @@ let config = {
 };
 
 if (config.lang == '--') {
-  config.lang = '(auto)';
+  config.lang = '';
 }
 
 let editor;
@@ -224,7 +224,7 @@ function updateOutputArea() {
     })
     .appendTo($output);
   let lang = config.lang;
-  if (lang == '(auto)') {
+  if (lang == '') {
     lang = /\s*</.test(config.code) ? 'markup' : 'js';
   }
 

@@ -128,6 +128,10 @@ body {
     outline: 0;
     border-radius: 4px;
 
+    &::placeholder {
+      color: rgba(#fff, .7);
+    }
+
     &:focus {
       background-color: #fff;
       color: material-color('blue-grey', '900');
@@ -139,7 +143,7 @@ body {
   }
 
   input::-webkit-calendar-picker-indicator {
-    display: none;
+    display: none !important;
   }
 
   button {
@@ -167,6 +171,7 @@ body {
 
   #lang {
     width: 150px;
+    appearance: none;
   }
 
   #tab-size {
