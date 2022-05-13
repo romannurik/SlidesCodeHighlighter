@@ -84,6 +84,7 @@ body {
   z-index: 100;
   box-shadow: 0 2px 4px rgba(#000, .2);
   display: flex;
+  gap: 8px;
   flex-direction: row;
   align-items: center;
   overflow-x: auto;
@@ -96,7 +97,6 @@ body {
     font-size: 12px;
     line-height: 16px;
     color: rgba(#fff, .6);
-    margin-right: 8px;
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -303,19 +303,33 @@ body {
       input {
         box-sizing: border-box;
         height: 24px;
+        border: 1px solid rgba(#000, .12);
+
+        &:focus {
+          z-index: 1;
+        }
+      }
+
+      input[type="color"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: none;
+        border-right: none;
+        
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        width: 24px;
+        padding: 0;
       }
 
       input[type="text"] {
         width: 7em * 0.8;
         padding: 4px;
-        font-family: monospace;
+        font-family: Monaco, Menlo, monospace;
         font-size: 11px;
-        display: none;
-      }
-
-      input[type="color"] {
-        width: 24px;
-        padding: 0;
+        border-left: none;
+        // display: none;
       }
     }
   }
@@ -329,20 +343,6 @@ body {
     span {
       margin-left: 8px;
     }
-  }
-
-  input[type=color] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: none;
-    border: 1px solid rgba(#000, .12);
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-
-    // when not shown as a color
-    width: 6em;
-    font-family: 'Roboto Mono';
   }
 }
 

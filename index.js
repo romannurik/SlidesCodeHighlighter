@@ -29,9 +29,13 @@ let config = {
   font: localStorage.highlighterFont || 'Roboto Mono',
   tabSize: Number(localStorage.highlighterTabSize || '4'),
   typeSize: Number(localStorage.highlighterTypeSize || '40'),
-  selectionTreatment: localStorage.highlighterSelectionTreatment || '--',
+  selectionTreatment: localStorage.highlighterSelectionTreatment || 'focus',
   customTheme: JSON.parse(localStorage.customTheme || JSON.stringify(DEFAULT_THEMES['light'])),
 };
+
+if (!!window.location.search) {
+  loadConfigFromUrl();
+}
 
 if (config.lang == '--') {
   config.lang = '';
@@ -96,7 +100,7 @@ function updateEditorParams() {
 
 function setupOutputArea() {
   // select all on click
-  $output.click(() => {
+  $output.on('click', () => {
     var selection = window.getSelection();
     var range = document.createRange();
     range.selectNodeContents($output.find('pre').get(0));
@@ -115,6 +119,7 @@ function setupToolbar() {
     .val(config.theme)
     .on('input', ev => {
       localStorage.highlighterTheme = config.theme = $(ev.target).val();
+      updateConfigUrl();
       updateOutputArea();
     });
 
@@ -122,6 +127,7 @@ function setupToolbar() {
     .val(config.lang)
     .on('input', ev => {
       localStorage.highlighterLang = config.lang = $(ev.target).val();
+      // updateConfigUrl();
       updateOutputArea();
     });
 
@@ -138,6 +144,7 @@ function setupToolbar() {
       localStorage.highlighterTabSize = $(ev.target).val();
       config.tabSize = Number(localStorage.highlighterTabSize);
       updateEditorParams();
+      updateConfigUrl();
       updateOutputArea();
     });
 
@@ -145,6 +152,7 @@ function setupToolbar() {
     .val(config.font)
     .on('input', ev => {
       localStorage.highlighterFont = config.font = $(ev.target).val();
+      updateConfigUrl();
       loadFont();
     });
 
@@ -152,6 +160,7 @@ function setupToolbar() {
     .val(config.selectionTreatment)
     .on('input', ev => {
       localStorage.highlighterSelectionTreatment = config.selectionTreatment = $(ev.target).val();
+      updateConfigUrl();
       updateOutputArea();
     });
 
@@ -163,6 +172,7 @@ function setupToolbar() {
     }
     config.typeSize = size;
     localStorage.highlighterTypeSize = String(config.typeSize);
+    updateConfigUrl();
     updateOutputArea();
   };
 
@@ -176,13 +186,55 @@ function setupToolbar() {
     })
     .on('keydown', ev => {
       if (!ev.shiftKey) {
-        if (ev.keyCode == 38 || ev.keyCode == 40) {
-          setTypeSize_(parseInt($typeSize.val(), 10) + (ev.keyCode == 38 ? 1 : -1));
+        if (ev.key == 'ArrowUp' || ev.key == 'ArrowDown') {
+          setTypeSize_(parseInt($typeSize.val(), 10) + (ev.key == 'ArrowUp' ? 1 : -1));
           ev.preventDefault();
         }
       }
     })
     .on('blur', ev => setTypeSize_(config.typeSize));
+}
+
+
+function updateConfigUrl() {
+  let p = new URLSearchParams();
+  // p.set('lang', config.lang);
+  if (config.theme === 'custom') {
+    p.set('theme', 'custom');
+    for (let [k, v] of Object.entries(config.customTheme)) {
+      let { type, short } = THEME_PROPERTIES.find(s => s.id === k);
+      p.set(`t.${short}`, type === 'color' ? v.replace(/^#/, '') : v);
+    }
+  } else {
+    p.set('theme', config.theme);
+  }
+  p.set('font', config.font);
+  p.set('tab', config.tabSize);
+  p.set('size', config.typeSize);
+  p.set('sel', config.selectionTreatment);
+  window.history.replaceState('', '', '?' + p.toString());
+}
+
+
+function loadConfigFromUrl() {
+  let p = new URLSearchParams(window.location.search);
+  // if (p.has('lang')) config.lang = p.get('lang');
+  if (p.has('theme')) {
+    let theme = p.get('theme');
+    if (theme === 'custom') {
+      config.theme = 'custom';
+      let customTheme = {};
+      for (let k of [...p.keys()].filter(k => k.startsWith('t.'))) {
+        let { type, id } = THEME_PROPERTIES.find(s => s.short === k.replace(/^t\./, ''));
+        customTheme[id] = type === 'color' ? '#' + p.get(k) : p.get(k);
+      }
+      config.customTheme = customTheme;
+    }
+  }
+  if (p.has('font')) config.font = p.get('font');
+  if (p.has('tab')) config.tabSize = p.get('tab');
+  if (p.has('size')) config.typeSize = p.get('size');
+  if (p.has('sel')) config.selectionTreatment = p.get('sel');
 }
 
 
@@ -481,7 +533,7 @@ function setupCustomThemeEditor() {
 
   let rebuildCustomThemeProperties = () => {
     let $customThemeEditor = $('.custom-theme-editor').empty();
-    for (let prop of THEME_PROPERTIES) {
+    for (let prop of THEME_PROPERTIES.filter(s => !s.hideEditor)) {
       let $prop = $('<div>')
         .addClass('custom-theme-prop')
         .appendTo($customThemeEditor);
@@ -496,6 +548,7 @@ function setupCustomThemeEditor() {
           config.customTheme[prop.id] = sanitize_($colorInput.val());
           $textInput.val(config.customTheme[prop.id]);
           localStorage.customTheme = JSON.stringify(config.customTheme);
+          updateConfigUrl();
           updateOutputArea();
         })
         .appendTo($label);
@@ -506,6 +559,7 @@ function setupCustomThemeEditor() {
           config.customTheme[prop.id] = sanitize_($textInput.val());
           $colorInput.val(config.customTheme[prop.id]);
           localStorage.customTheme = JSON.stringify(config.customTheme);
+          updateConfigUrl();
           updateOutputArea();
         })
         .appendTo($label);
@@ -515,7 +569,7 @@ function setupCustomThemeEditor() {
 
   rebuildCustomThemeProperties();
 
-  $('.custom-theme-import-export').click(() => {
+  $('.custom-theme-import-export').on('click', () => {
     let currentJSON = JSON.stringify(config.customTheme);
     let newJSON = window.prompt(
       'Copy the below JSON or paste new JSON for your custom theme.', currentJSON);
@@ -523,12 +577,21 @@ function setupCustomThemeEditor() {
       try {
         config.customTheme = Object.assign({}, DEFAULT_THEMES['light'], JSON.parse(newJSON) || {});
         localStorage.customTheme = JSON.stringify(config.customTheme);
+        updateConfigUrl();
         updateOutputArea();
         rebuildCustomThemeProperties();
       } catch (e) {
         alert('Error parsing the JSON: ' + e);
       }
     }
+  });
+
+  $('.custom-theme-reset').on('click', () => {
+    config.customTheme = { ...DEFAULT_THEMES['light'] };
+    localStorage.customTheme = JSON.stringify(config.customTheme);
+    updateConfigUrl();
+    updateOutputArea();
+    rebuildCustomThemeProperties();
   });
 }
 
