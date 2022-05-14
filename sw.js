@@ -24,15 +24,11 @@ workbox.clientsClaim();
 self.__precacheManifest = [
   {
     "url": "index.css",
-    "revision": "e14065bca6a679002054f0e7392010e0"
+    "revision": "16e8b0fbdb8773e4adc53713b07540a7"
   },
   {
     "url": "index.html",
     "revision": "13a534c56dd58c639ed1aab11f0bb62c"
-  },
-  {
-    "url": "index.js",
-    "revision": "e10dbe0d331f0b38fcdb29659c48a73d"
   },
   {
     "url": "prism.js",
