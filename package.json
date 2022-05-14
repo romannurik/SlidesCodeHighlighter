@@ -18,7 +18,7 @@
     "email": "roman@nurik.net"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": "14"
   },
   "private": true,
   "scripts": {
