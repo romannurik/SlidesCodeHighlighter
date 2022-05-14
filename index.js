@@ -15,7 +15,7 @@
  */
 
 import $ from 'jquery';
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import * as monaco from 'monaco-editor'; // TODO: figure out how to minify the bundle
 import WebFont from 'webfontloader';
 import './index.scss';
 import { DEFAULT_THEMES, setTheme, THEME_PROPERTIES } from './themes.js';
