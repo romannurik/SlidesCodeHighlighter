@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import $ from 'jquery';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import WebFont from 'webfontloader';
+import './index.scss';
 import { DEFAULT_THEMES, setTheme, THEME_PROPERTIES } from './themes.js';
 
 const WARN_LINES = 15;
@@ -69,18 +73,24 @@ function setupEditor() {
     return;
   }
 
-  editor = ace.edit($editor.get(0));
-  editor.$blockScrolling = Infinity;
-  editor.setValue(config.code, -1);
-  editor.setTheme('ace/theme/chrome');
-  editor.getSession().setMode('ace/mode/text');
-  editor.setOptions({
-    fontFamily: 'Roboto Mono',
-    fontSize: '11pt',
+  editor = monaco.editor.create($editor.get(0), {
+    automaticLayout: true,
+    minimap: {
+      enabled: false
+    },
+    language: 'plaintext',
+    value: config.code,
+    theme: 'vs',
+    fontSize: 14,
+    padding: {
+      top: 8,
+    },
+    fontFamily: '"Roboto Mono"',
   });
-  editor.on('change', () => updateCode_(editor.getValue()));
-  editor.getSelection().on('changeCursor', () => updateOutputArea());
-  editor.getSelection().on('changeSelection', () => updateOutputArea());
+  updateCode_(config.code);
+  editor.onDidChangeModelContent(() => updateCode_(editor.getValue()));
+  editor.onDidChangeCursorPosition(() => updateOutputArea());
+  editor.onDidChangeCursorSelection(() => updateOutputArea());
   updateEditorParams();
 }
 
@@ -90,11 +100,12 @@ function updateEditorParams() {
     return;
   }
 
-  editor.setOptions({
-    fontFamily: config.font,
-    fontSize: '11pt',
+  editor.updateOptions({
+    fontFamily: `"${config.font}"`,
+    // tab size
+    tabSize: config.tabSize,
+    detectIndentation: false,
   });
-  editor.getSession().setTabSize(config.tabSize);
 }
 
 
@@ -372,9 +383,9 @@ function highlightSelection() {
       + column - commonIndent);
 
   let hasHighlights = false;
-  for (let range of editor.getSelection().getAllRanges()) {
-    let targetStartPos = rangeToCharPos(range.start);
-    let targetEndPos = rangeToCharPos(range.end);
+  for (let range of editor.getSelections()) {
+    let targetStartPos = rangeToCharPos({ row: range.startLineNumber - 1, column: range.startColumn - 1 });
+    let targetEndPos = rangeToCharPos({ row: range.endLineNumber - 1, column: range.endColumn - 1 });
 
     if (targetEndPos == targetStartPos) {
       continue;

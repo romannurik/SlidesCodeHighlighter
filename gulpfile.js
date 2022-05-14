@@ -20,24 +20,18 @@ const del = require('del');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const workbox = require('workbox-build');
-const ghpages = require('gh-pages');
-const path = require('path');
+const { sassPlugin } = require('esbuild-sass-plugin');
 
+const esbuild = require('esbuild');
 
 let DEV_MODE = false;
-
-
-function errorHandler(error) {
-  console.error(error.stack);
-  this.emit('end'); // http://stackoverflow.com/questions/23971388
-}
 
 
 gulp.task('service-worker', () => {
   if (DEV_MODE) {
     return gulp.src('sw-dev.js')
-        .pipe($.rename('sw.js'))
-        .pipe(gulp.dest('dist'));
+      .pipe($.rename('sw.js'))
+      .pipe(gulp.dest('dist'));
   }
 
   return workbox.generateSW({
@@ -49,7 +43,7 @@ gulp.task('service-worker', () => {
     swDest: 'dist/sw.js',
     clientsClaim: true,
     skipWaiting: true
-  }).then(({warnings}) => {
+  }).then(({ warnings }) => {
     // In case there are any warnings from workbox-build, log them.
     for (const warning of warnings) {
       console.warn(warning);
@@ -61,41 +55,40 @@ gulp.task('service-worker', () => {
 });
 
 
+function esBuild(extraOptions) {
+  return esbuild.build({
+    entryPoints: ['index.js'],
+    bundle: true,
+    minify: !DEV_MODE,
+    loader: {
+      ".ttf": "file",
+    },
+    plugins: [sassPlugin()],
+    outfile: 'dist/index.js',
+    ...extraOptions,
+  });
+}
+
+gulp.task('esbuild', () => esBuild());
+
+
 gulp.task('copy', () => {
   return gulp.src([
     'index.html',
     'favicon.ico',
     'manifest.json',
 
-    // code
-    'material-colors.js',
-    'themes.js',
-    'index.js',
-
     // libs
     'prism.js',
-    'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/ace-builds/src-min-noconflict/ace.js',
-    'node_modules/ace-builds/src-min-noconflict/mode-text.js',
-    'node_modules/ace-builds/src-min-noconflict/theme-chrome.js',
-    'node_modules/webfontloader/webfontloader.js',
+    // 'node_modules/ace-builds/src-min-noconflict/ace.js',
+    // 'node_modules/ace-builds/src-min-noconflict/mode-text.js',
+    // 'node_modules/ace-builds/src-min-noconflict/theme-chrome.js',
+    // 'node_modules/webfontloader/webfontloader.js',
 
     // icons
     'images/**/*.png'
   ])
-      .pipe(gulp.dest('dist'));
-});
-
-
-gulp.task('styles', () => {
-  return gulp.src('index.scss')
-      .pipe($.changed('styles', {extension: '.scss'}))
-      .pipe($.sass({
-        style: 'expanded',
-        precision: 10,
-        quiet: true
-      }).on('error', errorHandler))
-      .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('dist'));
 });
 
 
@@ -106,7 +99,7 @@ gulp.task('clean', cb => {
 });
 
 
-gulp.task('build', gulp.series('styles', 'copy', 'service-worker'));
+gulp.task('build', gulp.series('clean', 'esbuild', 'copy', 'service-worker'));
 
 
 gulp.task('__serve__', gulp.series('build', () => {
@@ -117,18 +110,22 @@ gulp.task('__serve__', gulp.series('build', () => {
     }
   });
 
-  let reload = cb => { browserSync.reload(); cb(); };
+  let reload = cb => { browserSync.reload(); cb && cb(); };
+
+  esBuild({
+    watch: {
+      onRebuild(error, result) {
+        if (error) console.error('watch build failed:', error)
+        else reload();
+      },
+    },
+  });
+
   gulp.watch(['*.{html,js}'], gulp.series('copy', reload));
-  gulp.watch(['*.scss'], gulp.series('styles', reload));
 }));
 
 
 gulp.task('serve', gulp.series(cb => { DEV_MODE = true; cb(); }, '__serve__'));
-
-
-gulp.task('deploy', cb => {
-  ghpages.publish(path.join(process.cwd(), 'dist'), cb);
-});
 
 
 gulp.task('default', gulp.series('clean', 'build'));

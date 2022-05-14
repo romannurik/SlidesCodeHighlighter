@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import $ from 'jquery';
 import { materialColor } from './material-colors.js';
 
 export const THEME_PROPERTIES = [

@@ -4,21 +4,13 @@
   "devDependencies": {
     "browser-sync": "^2.24.4",
     "del": "^3.0.0",
-    "gh-pages": "^1.1.0",
+    "esbuild": "^0.14.39",
+    "esbuild-sass-plugin": "^2.2.6",
     "gulp": "^4.0.2",
     "gulp-cache": "^1.0.2",
-    "gulp-changed": "^3.2.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-if": "^2.0.2",
-    "gulp-ignore": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
     "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.1",
     "gulp-size": "^3.0.0",
-    "gulp-util": "^3.0.8",
-    "import-glob": "^1.5.0",
-    "node-util": "0.0.1",
-    "path": "^0.12.7",
     "workbox-build": "^3.2.0"
   },
   "author": {
@@ -34,8 +26,8 @@
     "start": "gulp serve"
   },
   "dependencies": {
-    "ace-builds": "^1.4.1",
-    "jquery": "^3.5.0",
+    "jquery": "^3.6.0",
+    "monaco-editor": "^0.33.0",
     "webfontloader": "^1.6.28"
   }
 }
