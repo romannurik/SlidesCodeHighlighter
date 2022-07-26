@@ -105,7 +105,8 @@ export function setTheme(theme, typeSize) {
       color: ${keywordTagColor};
     }
     
-    #output pre .token.important {
+    #output pre .token.important,
+    #output pre .token.metadata {
       color: ${declarationColor};
     }
     
@@ -137,7 +138,7 @@ export const DEFAULT_THEMES = {
     commentColor: materialColor('pink', '600'),
     typeColor: materialColor('purple', '500'),
     numberColor: '#c53929', // g-red 700
-    declarationColor: materialColor('indigo', '500'),
+    declarationColor: materialColor('cyan', '700'),
     dimmedColor: materialColor('grey', '400'),
     highlightColor: materialColor('grey', '300'),
     lineHeight: 1.5,
@@ -180,7 +181,7 @@ export const DEFAULT_THEMES = {
     commentColor: '#aaaaaa',
     typeColor: '#ff8a65', // alt #f06292
     numberColor: '#f4b400',
-    declarationColor: '#e67c73',
+    declarationColor: '#f06292',
     dimmedColor: '#777777',
     highlightColor: '#444444',
     lineHeight: 1.5,
