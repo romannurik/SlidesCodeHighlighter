@@ -21,6 +21,7 @@ export const THEME_PROPERTIES = [
   { short: 'b', id: 'bgColor', name: 'Background', type: 'color' },
   { short: 't', id: 'textColor', name: 'Plain text', type: 'color' },
   { short: 'p', id: 'punctuationColor', name: 'Punctuation', type: 'color' },
+  { short: 'o', id: 'operatorColor', name: 'Operators', type: 'color' },
   { short: 's', id: 'stringAndValueColor', name: 'Strings, values', type: 'color' },
   { short: 'k', id: 'keywordTagColor', name: 'Keywords, tags', type: 'color' },
   { short: 'c', id: 'commentColor', name: 'Comments', type: 'color' },
@@ -34,9 +35,9 @@ export const THEME_PROPERTIES = [
 
 
 export function setTheme(theme, typeSize) {
-  let { bgColor, textColor, punctuationColor, stringAndValueColor,
-    keywordTagColor, commentColor, typeColor, numberColor,
-    declarationColor, dimmedColor, highlightColor, lineHeight } = theme;
+  let { bgColor, textColor, punctuationColor, stringAndValueColor, operatorColor,
+    keywordTagColor, commentColor, typeColor, numberColor, declarationColor, dimmedColor,
+    highlightColor, lineHeight } = theme;
   lineHeight = lineHeight || 1.5;
   let css = `
     #output pre,
@@ -74,9 +75,12 @@ export function setTheme(theme, typeSize) {
       color: ${stringAndValueColor};
     }
     
-    #output pre .token.punctuation,
-    #output pre .token.operator {
+    #output pre .token.punctuation {
       color: ${punctuationColor};
+    }
+
+    #output pre .token.operator {
+      color: ${operatorColor || punctuationColor};
     }
     
     #output pre .token.entity,
@@ -255,5 +259,21 @@ export const DEFAULT_THEMES = {
     dimmedColor: "#4d4d4d",
     highlightColor: "#4d3663",
     lineHeight: 1.2
-  }
+  },
+  'flutter2022': {
+    bgColor: "#151718",
+    textColor: "#dddddd",
+    operatorColor: "#ff7e29",
+    punctuationColor: "#a4b2c6",
+    stringAndValueColor: "#fff275",
+    keywordTagColor: "#13b9fd",
+    commentColor: "#a4b2c6",
+    typeColor: "#27f5dd",
+    numberColor: "#ff9ea5",
+    declarationColor: "#9ceaf7", // prev: variables + properties
+    // spare color: ad92ff for functions + methods
+    dimmedColor: "#656f7d",
+    highlightColor: "#262a2b",
+    lineHeight: 1.5,
+  },
 };
