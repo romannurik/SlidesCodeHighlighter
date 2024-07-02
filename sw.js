@@ -23,10 +23,6 @@ workbox.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "index.css",
-    "revision": "16e8b0fbdb8773e4adc53713b07540a7"
-  },
-  {
     "url": "index.html",
     "revision": "3524c48680a7dd180678e9c7c060aaf3"
   },
