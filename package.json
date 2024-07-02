@@ -4,8 +4,8 @@
   "devDependencies": {
     "browser-sync": "^2.24.4",
     "del": "^3.0.0",
-    "esbuild": "^0.14.39",
-    "esbuild-sass-plugin": "^2.2.6",
+    "esbuild": "^0.23.0",
+    "esbuild-sass-plugin": "^3.3.1",
     "gulp": "^4.0.2",
     "gulp-cache": "^1.0.2",
     "gulp-load-plugins": "^1.5.0",
@@ -18,7 +18,7 @@
     "email": "roman@nurik.net"
   },
   "engines": {
-    "node": "14"
+    "node": "18"
   },
   "private": true,
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "jquery": "^3.6.0",
-    "monaco-editor": "^0.33.0",
+    "monaco-editor": "^0.50.0",
     "webfontloader": "^1.6.28"
   }
 }

@@ -56,20 +56,27 @@ gulp.task('service-worker', () => {
 
 
 function esBuild(extraOptions) {
-  return esbuild.build({
+  return esbuild.context({
     entryPoints: ['index.js'],
     bundle: true,
     minify: !DEV_MODE,
     loader: {
       ".ttf": "file",
     },
-    plugins: [sassPlugin()],
-    outfile: 'dist/index.js',
     ...extraOptions,
+    plugins: [
+      ...(extraOptions?.plugins || []),
+      sassPlugin(),
+    ],
+    outfile: 'dist/index.js',
   });
 }
 
-gulp.task('esbuild', () => esBuild());
+gulp.task('esbuild', async () => {
+  let ctx = await esBuild();
+  ctx.rebuild();
+  ctx.dispose();
+});
 
 
 gulp.task('copy', () => {
@@ -113,13 +120,15 @@ gulp.task('__serve__', gulp.series('build', () => {
   let reload = cb => { browserSync.reload(); cb && cb(); };
 
   esBuild({
-    watch: {
-      onRebuild(error, result) {
-        if (error) console.error('watch build failed:', error)
-        else reload();
+    plugins: [{
+      name: 'on-build-end',
+      setup(build) {
+        build.onEnd((result) => {
+          if (!result.errors.length) reload();
+        });
       },
-    },
-  });
+    }]
+  }).then(ctx => ctx.watch());
 
   gulp.watch(['*.{html,js}'], gulp.series('copy', reload));
 }));
