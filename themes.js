@@ -271,7 +271,7 @@ export const DEFAULT_THEMES = {
     numberColor: "#C53929",
     declarationColor: "#0097A7",
     dimmedColor: "#A39F9F",
-    highlightColor: "#EDC7FF",
+    highlightColor: "#62247F",
     lineHeight: 1.5,
   },
   'flutter2022': {
