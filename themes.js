@@ -263,15 +263,15 @@ export const DEFAULT_THEMES = {
   "angular-dark": {
     bgColor: "#151417",
     textColor: "#FBFBFB",
-    punctuationColor: "#37474F",
+    punctuationColor: "#D963C9",
     stringAndValueColor: "#FDAB9B",
     keywordTagColor: "#9BB5FF",
     commentColor: "#D81B60",
     typeColor: "#FBAFF4",
     numberColor: "#C53929",
     declarationColor: "#0097A7",
-    dimmedColor: "#E0E0E0",
-    highlightColor: "#E0E0E0",
+    dimmedColor: "#A39F9F",
+    highlightColor: "#62247F",
     lineHeight: 1.5,
   },
   'flutter2022': {
