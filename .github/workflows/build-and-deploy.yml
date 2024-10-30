@@ -3,7 +3,7 @@ name: Node Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-and-deploy:

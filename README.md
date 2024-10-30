@@ -3,7 +3,7 @@ A little web app that helps you copy+paste syntax-highlighted code into slide de
 
 **[Open the app](https://romannurik.github.io/SlidesCodeHighlighter/)**
 
-![Screenshot](https://raw.githubusercontent.com/romannurik/SlidesCodeHighlighter/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/romannurik/SlidesCodeHighlighter/main/screenshot.png)
 
 
 ## Build instructions
