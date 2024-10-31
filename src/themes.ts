@@ -14,122 +14,87 @@
  * limitations under the License.
  */
 
-import $ from 'jquery';
-import { materialColor } from './material-colors.js';
+import { Config } from './Config';
+import { materialColor } from './material-colors';
 
-export const THEME_PROPERTIES = [
-  { short: 'b', id: 'bgColor', name: 'Background', type: 'color' },
-  { short: 't', id: 'textColor', name: 'Plain text', type: 'color' },
-  { short: 'p', id: 'punctuationColor', name: 'Punctuation', type: 'color' },
-  { short: 'o', id: 'operatorColor', name: 'Operators', type: 'color' },
-  { short: 's', id: 'stringAndValueColor', name: 'Strings, values', type: 'color' },
-  { short: 'k', id: 'keywordTagColor', name: 'Keywords, tags', type: 'color' },
-  { short: 'c', id: 'commentColor', name: 'Comments', type: 'color' },
-  { short: 'y', id: 'typeColor', name: 'Types', type: 'color' },
-  { short: 'n', id: 'numberColor', name: 'Numbers', type: 'color' },
-  { short: 'd', id: 'declarationColor', name: 'Declarations', type: 'color' },
-  { short: 'i', id: 'dimmedColor', name: 'Selection: Unfocused', type: 'color' },
-  { short: 'h', id: 'highlightColor', name: 'Selection: Highlighter', type: 'color' },
-  { short: 'lh', id: 'lineHeight', name: 'Line height', hideEditor: true },
-];
+export interface LegacyTheme {
+  bgColor: string;
+  textColor: string;
+  punctuationColor: string;
+  stringAndValueColor: string;
+  keywordTagColor: string;
+  commentColor: string;
+  typeColor: string;
+  numberColor: string;
+  declarationColor: string;
+  dimmedColor: string;
+  highlightColor: string;
+  operatorColor?: string;
+  lineHeight?: number;
+}
 
+export const GLOBAL_OUTPUT_CONTAINER_CLASS = '__output-container';
 
-export function setTheme(theme, typeSize) {
-  let { bgColor, textColor, punctuationColor, stringAndValueColor, operatorColor,
-    keywordTagColor, commentColor, typeColor, numberColor, declarationColor, dimmedColor,
-    highlightColor, lineHeight } = theme;
+export const THEME_PROPERTIES: {
+  short: string;
+  id: keyof LegacyTheme;
+  name: string;
+  type: 'color' | 'number';
+  hideEditor?: true;
+}[] = [
+    { short: 'b', id: 'bgColor', name: 'Background', type: 'color' },
+    { short: 't', id: 'textColor', name: 'Plain text', type: 'color' },
+    { short: 'p', id: 'punctuationColor', name: 'Punctuation', type: 'color' },
+    { short: 'o', id: 'operatorColor', name: 'Operators', type: 'color' },
+    { short: 's', id: 'stringAndValueColor', name: 'Strings, values', type: 'color' },
+    { short: 'k', id: 'keywordTagColor', name: 'Keywords, tags', type: 'color' },
+    { short: 'c', id: 'commentColor', name: 'Comments', type: 'color' },
+    { short: 'y', id: 'typeColor', name: 'Types', type: 'color' },
+    { short: 'n', id: 'numberColor', name: 'Numbers', type: 'color' },
+    { short: 'd', id: 'declarationColor', name: 'Declarations', type: 'color' },
+    { short: 'i', id: 'dimmedColor', name: 'Selection: Unfocused', type: 'color' },
+    { short: 'h', id: 'highlightColor', name: 'Selection: Highlighter', type: 'color' },
+    { short: 'lh', id: 'lineHeight', name: 'Line height', type: 'number', hideEditor: true },
+  ];
+
+export function resolveTheme(context: Config): LegacyTheme {
+  if (context.theme === "custom") {
+    return context.customTheme ?? DEFAULT_THEMES.light;
+  }
+
+  return DEFAULT_THEMES[context.theme];
+}
+
+export function setTheme(theme: LegacyTheme, typeSize: number) {
+  let { bgColor, textColor, dimmedColor, highlightColor, lineHeight } = theme;
   lineHeight = lineHeight || 1.5;
+  const ROOT = `.${GLOBAL_OUTPUT_CONTAINER_CLASS}`;
   let css = `
-    #output pre,
-    #output pre mark {
+    ${ROOT} pre,
+    ${ROOT} pre mark {
       line-height: ${lineHeight * typeSize}px;
       color: ${textColor};
     }
-    #output.has-highlights[data-seltreat="focus"] pre > :not(mark),
-    #output.has-highlights[data-seltreat="focus"] pre :not(mark),
-    #output.has-highlights[data-seltreat="focus"] pre {
-      color: ${dimmedColor || 'grey'};
+    ${ROOT}.has-highlights[data-seltreat="focus"] pre > :not(mark),
+    ${ROOT}.has-highlights[data-seltreat="focus"] pre :not(mark),
+    ${ROOT}.has-highlights[data-seltreat="focus"] pre {
+      color: ${dimmedColor || 'grey'} !important;
     }
-    #output.has-highlights[data-seltreat="highlight"] pre mark {
+    ${ROOT}.has-highlights[data-seltreat="highlight"] pre mark {
       background-color: ${highlightColor || 'yellow'};
     }
-    #output::after {
+    ${ROOT}::after {
       /* to avoid background color being copied to clipboard */
       background-color: ${bgColor};
     }
-
-    #output pre .token.comment,
-    #output pre .token.prolog,
-    #output pre .token.doctype,
-    #output pre .token.cdata {
-      color: ${commentColor};
-    }
-    
-    #output pre .token.namespace {
-      opacity: .7;
-    }
-    
-    #output pre .token.string,
-    #output pre .token.regex,
-    #output pre .token.attr-value {
-      color: ${stringAndValueColor};
-    }
-    
-    #output pre .token.punctuation {
-      color: ${punctuationColor};
-    }
-
-    #output pre .token.operator {
-      color: ${operatorColor || punctuationColor};
-    }
-    
-    #output pre .token.entity,
-    #output pre .token.url,
-    #output pre .token.symbol,
-    #output pre .token.number,
-    #output pre .token.variable,
-    #output pre .token.constant,
-    #output pre .token.inserted {
-      color: ${numberColor};
-    }
-    
-    #output pre .token.atrule,
-    #output pre .token.class-name,
-    #output pre .token.attr-name,
-    #output pre .token.selector,
-    #output pre .token.builtin {
-      color: ${typeColor};
-    }
-    
-    #output pre .token.deleted,
-    #output pre .token.property,
-    #output pre .token.boolean,
-    #output pre .token.keyword,
-    #output pre .token.tag {
-      color: ${keywordTagColor};
-    }
-    
-    #output pre .token.important,
-    #output pre .token.metadata {
-      color: ${declarationColor};
-    }
-    
-    #output pre .token.bold {
-      font-weight: bold;
-    }
-    
-    #output pre .token.italic {
-      font-style: italic;
-    }
   `;
 
-  $('[theme-rules]').remove();
+  document.querySelector('[theme-rules]')?.remove();
 
-  $('<style>')
-    .attr('theme-rules', true)
-    .text(css)
-    .appendTo(document.body);
-  $('.message-bgcolor').text(`Set your background color to: ${bgColor.toUpperCase()}`);
+  let style = document.createElement('style');
+  style.setAttribute('theme-rules', 'true');
+  style.textContent = css;
+  document.body.appendChild(style);
 }
 
 export const DEFAULT_THEMES = {
@@ -290,4 +255,6 @@ export const DEFAULT_THEMES = {
     highlightColor: "#262a2b",
     lineHeight: 1.5,
   },
-};
+} as const satisfies Record<string, LegacyTheme>;
+
+export type ThemeName = keyof typeof DEFAULT_THEMES | 'custom';

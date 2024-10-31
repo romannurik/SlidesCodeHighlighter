@@ -1,0 +1,21 @@
+@use '../lib' as lib;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  gap: 4px;
+}
+
+.message {
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: 4px;
+  background-color: lib.material-color('blue-grey', '600');
+  color: #fff;
+
+  &[data-type="warning"] {
+    background-color: lib.material-color('red', 'a400');
+  }
+}

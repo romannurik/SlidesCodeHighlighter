@@ -1,0 +1,65 @@
+.customThemeArea {
+  flex: 0 0 auto;
+  display: none;
+
+  @include mobile {
+    flex: 1 0 0;
+  }
+
+  .toolbar {
+    .checkboxLabel {
+      margin: 0 0 0 8px;
+    }
+  }
+}
+
+.customThemeEditor {
+  flex: 1 1 0;
+  overflow-y: auto;
+  padding: 12px;
+
+  .customThemeProp {
+    input {
+      box-sizing: border-box;
+      height: 24px;
+      border: 1px solid rgba(#000, .12);
+
+      &:focus {
+        z-index: 1;
+      }
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: none;
+      border-right: none;
+      
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      width: 24px;
+      padding: 0;
+    }
+
+    input[type="text"] {
+      width: 7em * 0.8;
+      padding: 4px;
+      font-family: Monaco, Menlo, monospace;
+      font-size: 11px;
+      border-left: none;
+      // display: none;
+    }
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0 0 8px;
+
+    span {
+      margin-left: 8px;
+    }
+  }
+}

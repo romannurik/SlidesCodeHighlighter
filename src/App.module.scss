@@ -1,0 +1,30 @@
+@use "./lib" as lib;
+
+@mixin mobile {
+  @media only screen and (max-width: 500px) {
+    @content;
+  }
+}
+
+$thinBorderColor: rgba(#000, .12);
+
+.editArea,
+.outputArea,
+.customThemeArea {
+  background-color: #fff;
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+  box-shadow: 0 4px 8px rgba(#000, .2);
+  border-radius: 4px;
+  overflow: hidden;
+
+  @include lib.mobile {
+    min-height: 400px;
+  }
+}
+
+.messages {
+  flex: 0 0 auto;
+}
