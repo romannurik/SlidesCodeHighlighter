@@ -1,0 +1,48 @@
+.output {
+  flex: 1;
+  position: relative;
+
+  pre {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    // transform applied in JS
+    margin: 0;
+    font-family: 'Roboto Mono';
+    font-size: 10px;
+    z-index: 1;
+
+    mark {
+      background-color: unset;
+      color: unset;
+    }
+  }
+
+  &::after {
+    // to avoid background color being copied to clipboard
+    content: '';
+    display: block;
+    z-index: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &:global(.has-highlights) {
+    mark {
+      background-color: transparent;
+    }
+    &[data-seltreat="bold"] {
+      mark {
+        font-weight: 700;
+      }
+    }
+    &[data-seltreat="highlight"] {
+      mark {
+        padding: .1em 0;
+      }
+    }
+  }
+}

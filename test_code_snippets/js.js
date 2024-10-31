@@ -2,6 +2,9 @@ import {Blah} from 'blah';
 
 const URL = `http://app.com/?dev=${DEV}`;
 
+/**
+ * @link Hello
+ */
 class Foo extends Bar {
   constructor() {
     // init foo

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@use "sass:map";
 
 $material-colors: (
   'red': (
@@ -329,7 +330,7 @@ $material-colors: (
 );
 
 @function material-color($color-name, $color-variant: '500') {
-  $color: map-get(map-get($material-colors, $color-name), $color-variant);
+  $color: map.get(map.get($material-colors, $color-name), $color-variant);
   @if $color {
     @return $color;
   } @else {

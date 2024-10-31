@@ -308,9 +308,14 @@ const COLORS = {
     '800':  {hex: '#37474F', white: true},
     '900':  {hex: '#263238', white: true}
   }
-};
+} as const;
 
 
-export function materialColor(hue, value) {
-  return COLORS[hue][value].hex;
+export function materialColor<Hue extends keyof typeof COLORS>(hue: Hue, value: keyof typeof COLORS[Hue]): string {
+  const v = COLORS[hue][value];
+  if (!v || typeof v !== 'object' || !('hex' in v)) {
+    return '#000000';
+  }
+
+  return String(v.hex);
 }
