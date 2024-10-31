@@ -104,7 +104,7 @@ async function codeToHighlightedPre(
   pre.style.lineHeight = `${config.typeSize * 1.5}px`;
   pre.style.backgroundColor = "transparent";
 
-  let lang = config.lang || (/\s*</.test(config.code) ? "markup" : "js");
+  let lang = config.lang || (/\s*</.test(config.code) ? "html" : "js");
 
   let code = cleanupCode(config.code, config.tabSize).code;
 
@@ -119,17 +119,23 @@ async function codeToHighlightedPre(
   try {
     if (!highlighter.getLoadedLanguages().includes(lang))
       await highlighter.loadLanguage(lang as shiki.BuiltinLanguage);
-    if (!highlighter.getLoadedThemes().includes(theme.name!))
-      await highlighter.loadTheme(theme);
   } catch (e) {
     console.warn(e);
     lang = "plaintext";
   }
 
+  let themeName = theme.name || '';
+  try {
+    if (!highlighter.getLoadedThemes().includes(themeName))
+      await highlighter.loadTheme(theme);
+  } catch (e) {
+    themeName = 'light-plus' satisfies shiki.BundledTheme;
+  }
+
   pre.innerHTML = highlighter
     .codeToHtml(code, {
       lang,
-      theme: theme.name || "",
+      theme: themeName,
     })
     .replace(/<\/?(pre|code).*?>/g, "");
 
