@@ -1,8 +1,18 @@
+import { useEffect, useState } from "react";
 import { Config, useConfig } from "../../Config";
+import { DEFAULT_THEME_NAMES } from "../../themes";
 import styles from "./Toolbar.module.scss";
 
 export function OutputToolbar() {
   let [config, updateConfig] = useConfig();
+  let [typeSize, setTypeSize] = useState<string>();
+
+  useEffect(() => {
+    let val = parseInt(typeSize || "", 10);
+    if (!isNaN(val) && val > 4) {
+      updateConfig({ typeSize: val });
+    }
+  }, [typeSize, updateConfig]);
 
   return (
     <>
@@ -20,17 +30,13 @@ export function OutputToolbar() {
                 })
               }
             >
-              <option value="light">Light</option>
-              <option value="light-alt">Light (alternate)</option>
-              <option value="dark">Dark</option>
-              <option value="dark-alt">Dark (alternate)</option>
-              <option value="design-dark">Dark (design)</option>
-              <option value="io17">#io17</option>
-              <option value="io19">#io19</option>
-              <option value="flutter-interact-19">Flutter Interact 2019</option>
-              <option value="angular-light">Angular Light</option>
-              <option value="angular-dark">Angular Dark</option>
-              <option value="flutter2022">Flutter 2022</option>
+              {Object.entries(DEFAULT_THEME_NAMES)
+                .sort((a, b) => a[1].localeCompare(b[1]))
+                .map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
               <option value="custom">Custom</option>
             </select>
           </div>
@@ -80,26 +86,24 @@ export function OutputToolbar() {
             style={{ width: 60 }}
             type="text"
             id="type-size"
-            value={config.typeSize}
+            value={typeSize ?? config.typeSize}
             onInput={(ev) => {
-              let val = parseInt(ev.currentTarget.value, 10);
-              if (!isNaN(val) && val > 4) {
-                updateConfig({ typeSize: val });
-              }
+              setTypeSize(ev.currentTarget.value);
             }}
             onKeyDown={(ev) => {
-              if (!ev.shiftKey) {
-                if (ev.key == "ArrowUp" || ev.key == "ArrowDown") {
-                  updateConfig({
-                    typeSize:
-                      parseInt(ev.currentTarget.value, 10) +
-                      (ev.key == "ArrowUp" ? 1 : -1),
-                  });
-                  ev.preventDefault();
-                }
+              if (
+                !ev.shiftKey &&
+                (ev.key === "ArrowUp" || ev.key === "ArrowDown")
+              ) {
+                let val = parseInt(ev.currentTarget.value, 10);
+                if (isNaN(val)) return;
+                setTypeSize(String(val + (ev.key == "ArrowUp" ? 1 : -1)));
+                ev.preventDefault();
               }
             }}
-            onBlur={() => updateConfig({ typeSize: 40 })}
+            onBlur={() => {
+              setTypeSize(undefined);
+            }}
           />
         </label>
 

@@ -12,6 +12,11 @@
     font-family: 'Roboto Mono';
     font-size: 10px;
     z-index: 1;
+
+    mark {
+      background-color: unset;
+      color: unset;
+    }
   }
 
   &::after {

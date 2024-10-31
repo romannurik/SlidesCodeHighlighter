@@ -1,23 +1,12 @@
-/*
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+import { bundledThemes, bundledThemesInfo, ThemeRegistration } from 'shiki';
 import { Config } from './Config';
+import { legacyToShikiTheme } from './legacy-to-shiki-theme';
 import { materialColor } from './material-colors';
+import tinycolor from 'tinycolor2';
 
 export interface LegacyTheme {
+  legacy: true;
+  name: string;
   bgColor: string;
   textColor: string;
   punctuationColor: string;
@@ -30,7 +19,6 @@ export interface LegacyTheme {
   dimmedColor: string;
   highlightColor: string;
   operatorColor?: string;
-  lineHeight?: number;
 }
 
 export const GLOBAL_OUTPUT_CONTAINER_CLASS = '__output-container';
@@ -54,51 +42,61 @@ export const THEME_PROPERTIES: {
     { short: 'd', id: 'declarationColor', name: 'Declarations', type: 'color' },
     { short: 'i', id: 'dimmedColor', name: 'Selection: Unfocused', type: 'color' },
     { short: 'h', id: 'highlightColor', name: 'Selection: Highlighter', type: 'color' },
-    { short: 'lh', id: 'lineHeight', name: 'Line height', type: 'number', hideEditor: true },
   ];
 
-export function resolveTheme(context: Config): LegacyTheme {
+export async function resolveTheme(context: Config): Promise<ThemeRegistration> {
   if (context.theme === "custom") {
-    return context.customTheme ?? DEFAULT_THEMES.light;
+    return legacyToShikiTheme(context.customTheme ?? DEFAULT_LEGACY_THEMES.light);
+  } else if (context.theme in DEFAULT_LEGACY_THEMES) {
+    return legacyToShikiTheme(DEFAULT_LEGACY_THEMES[context.theme as keyof typeof DEFAULT_LEGACY_THEMES]);
+  } else if (context.theme in bundledThemes) {
+    return (await bundledThemes[context.theme as keyof typeof bundledThemes]()).default;
   }
 
-  return DEFAULT_THEMES[context.theme];
+  return legacyToShikiTheme(DEFAULT_LEGACY_THEMES.light);
 }
 
-export function setTheme(theme: LegacyTheme, typeSize: number) {
-  let { bgColor, textColor, dimmedColor, highlightColor, lineHeight } = theme;
-  lineHeight = lineHeight || 1.5;
+export function setTheme(theme: ThemeRegistration) {
+  let colors = theme.colors || {};
+
+  let fg = colors['editor.foreground'] || colors['foreground'];
+  let bg = colors['editor.background'];
+
   const ROOT = `.${GLOBAL_OUTPUT_CONTAINER_CLASS}`;
   let css = `
     ${ROOT} pre,
     ${ROOT} pre mark {
-      line-height: ${lineHeight * typeSize}px;
-      color: ${textColor};
+      color: ${fg};
     }
     ${ROOT}.has-highlights[data-seltreat="focus"] pre > :not(mark),
     ${ROOT}.has-highlights[data-seltreat="focus"] pre :not(mark),
     ${ROOT}.has-highlights[data-seltreat="focus"] pre {
-      color: ${dimmedColor || 'grey'} !important;
+      color: ${colors['__dimmedColor'] || tinycolor.mix(fg, bg, 75).toRgbString()
+    } !important;
     }
     ${ROOT}.has-highlights[data-seltreat="highlight"] pre mark {
-      background-color: ${highlightColor || 'yellow'};
+      background-color: ${colors['editor.selectionBackground'] || 'yellow'};
     }
     ${ROOT}::after {
       /* to avoid background color being copied to clipboard */
-      background-color: ${bgColor};
+      background-color: ${bg};
     }
   `;
 
-  document.querySelector('[theme-rules]')?.remove();
+  let style = document.querySelector('style[theme-rules]') as HTMLStyleElement | null;
+  if (!style) {
+    style = document.createElement('style');
+    style.setAttribute('theme-rules', 'true');
+    document.body.appendChild(style);
+  }
 
-  let style = document.createElement('style');
-  style.setAttribute('theme-rules', 'true');
   style.textContent = css;
-  document.body.appendChild(style);
 }
 
-export const DEFAULT_THEMES = {
+export const DEFAULT_LEGACY_THEMES = {
   'light': {
+    legacy: true,
+    name: 'Light',
     bgColor: materialColor('grey', '100'),
     textColor: materialColor('blue-grey', '800'),
     punctuationColor: materialColor('blue-grey', '800'),
@@ -110,9 +108,10 @@ export const DEFAULT_THEMES = {
     declarationColor: materialColor('cyan', '700'),
     dimmedColor: materialColor('grey', '400'),
     highlightColor: materialColor('grey', '300'),
-    lineHeight: 1.5,
   },
   'light-alt': {
+    legacy: true,
+    name: 'Light (alternate)',
     bgColor: '#eeeeee',
     textColor: '#000000',
     punctuationColor: '#a3a3a3',
@@ -125,9 +124,10 @@ export const DEFAULT_THEMES = {
     declarationColor: '#e67c73',
     dimmedColor: materialColor('grey', '400'),
     highlightColor: '#dddddd',
-    lineHeight: 1.5,
   },
   'dark': {
+    legacy: true,
+    name: 'Dark',
     bgColor: materialColor('grey', '900'),
     textColor: materialColor('blue-grey', '50'),
     punctuationColor: materialColor('blue-grey', '50'),
@@ -139,9 +139,10 @@ export const DEFAULT_THEMES = {
     declarationColor: materialColor('yellow', '700'),
     dimmedColor: materialColor('grey', '500'),
     highlightColor: materialColor('grey', '700'),
-    lineHeight: 1.5,
   },
   'dark-alt': {
+    legacy: true,
+    name: 'Dark (alternate)',
     bgColor: '#000000',
     textColor: '#ffffff',
     punctuationColor: '#a3a3a3',
@@ -153,9 +154,10 @@ export const DEFAULT_THEMES = {
     declarationColor: '#f06292',
     dimmedColor: '#777777',
     highlightColor: '#444444',
-    lineHeight: 1.5,
   },
   'design-dark': {
+    legacy: true,
+    name: 'Dark (design)',
     bgColor: '#263238',
     textColor: '#ffffff',
     punctuationColor: '#90a4ae',
@@ -167,9 +169,10 @@ export const DEFAULT_THEMES = {
     declarationColor: '#90a4ae',
     dimmedColor: '#5f6c73',
     highlightColor: '#586870',
-    lineHeight: 1.5,
   },
   'io17': {
+    legacy: true,
+    name: '#io17',
     bgColor: '#263238', // #546dfe
     textColor: '#ffffff',
     punctuationColor: '#90a4ae',
@@ -181,9 +184,10 @@ export const DEFAULT_THEMES = {
     declarationColor: '#90a4ae',
     dimmedColor: '#5f6c73',
     highlightColor: '#586870',
-    lineHeight: 1.2,
   },
   'io19': {
+    legacy: true,
+    name: '#io19',
     bgColor: '#202124',
     textColor: '#ffffff',
     punctuationColor: '#9aa0a6',
@@ -195,9 +199,10 @@ export const DEFAULT_THEMES = {
     declarationColor: '#fcc934',
     dimmedColor: '#5f6c73',
     highlightColor: '#4d555b',
-    lineHeight: 1.2,
   },
   'flutter-interact-19': {
+    legacy: true,
+    name: 'Flutter Interact 2019',
     bgColor: "#241e30",
     textColor: "#fafbfb",
     punctuationColor: "#8be9fd",
@@ -209,9 +214,10 @@ export const DEFAULT_THEMES = {
     declarationColor: "#ff8383",
     dimmedColor: "#87858e",
     highlightColor: '#425a6c',
-    lineHeight: 1.2,
   },
   "angular-light": {
+    legacy: true,
+    name: 'Angular Light',
     bgColor: "#F5F5F5",
     textColor: "#37474F",
     punctuationColor: "#37474F",
@@ -223,9 +229,10 @@ export const DEFAULT_THEMES = {
     declarationColor: "#0097A7",
     dimmedColor: "#BDBDBD",
     highlightColor: "#E0E0E0",
-    lineHeight: 1.5,
   },
   "angular-dark": {
+    legacy: true,
+    name: 'Angular Dark',
     bgColor: "#151417",
     textColor: "#FBFBFB",
     punctuationColor: "#D963C9",
@@ -237,9 +244,10 @@ export const DEFAULT_THEMES = {
     declarationColor: "#0097A7",
     dimmedColor: "#A39F9F",
     highlightColor: "#62247F",
-    lineHeight: 1.5,
   },
   'flutter2022': {
+    legacy: true,
+    name: 'Flutter 2022',
     bgColor: "#151718",
     textColor: "#dddddd",
     operatorColor: "#ff7e29",
@@ -253,8 +261,12 @@ export const DEFAULT_THEMES = {
     // spare color: ad92ff for functions + methods
     dimmedColor: "#656f7d",
     highlightColor: "#262a2b",
-    lineHeight: 1.5,
   },
 } as const satisfies Record<string, LegacyTheme>;
 
-export type ThemeName = keyof typeof DEFAULT_THEMES | 'custom';
+export const DEFAULT_THEME_NAMES: Record<string, string> = Object.fromEntries([
+  ...Object.entries(DEFAULT_LEGACY_THEMES).map(([id, { name }]) => [id, name]),
+  ...bundledThemesInfo.map((info) => [info.id, info.displayName]),
+]);
+
+export type ThemeName = keyof typeof DEFAULT_LEGACY_THEMES | keyof typeof bundledThemes | 'custom';

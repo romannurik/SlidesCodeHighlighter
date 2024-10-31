@@ -47,7 +47,7 @@ export function useConfig(): [Config, (updates: Partial<Config>) => void] {
         if ("code" in updates) localStorage.highlighterCode = updates.code;
         if ("theme" in updates) localStorage.highlighterTheme = updates.theme;
         if ("lang" in updates)
-          localStorage.highlighterLang = updates.lang || undefined;
+          localStorage.highlighterLang = updates.lang || '';
         if ("font" in updates) localStorage.highlighterFont = updates.font;
         if ("tabSize" in updates)
           localStorage.highlighterTabSize = updates.tabSize;

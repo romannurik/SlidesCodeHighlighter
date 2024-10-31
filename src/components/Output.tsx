@@ -5,9 +5,7 @@ import WebFont from "webfontloader";
 import { AppState, AppStateContext } from "../AppState";
 import { cleanupCode } from "../cleanup-code";
 import { Config, useConfig } from "../Config";
-import { legacyToShikiTheme } from "../legacy-to-shiki-theme";
 import {
-  DEFAULT_THEMES,
   GLOBAL_OUTPUT_CONTAINER_CLASS,
   resolveTheme,
   setTheme,
@@ -16,6 +14,7 @@ import { htmlEscape } from "../util";
 import styles from "./Output.module.scss";
 
 const OUTPUT_PADDING = 20;
+const FONT_PROMISES: Record<string, Promise<void>> = {};
 
 export function Output() {
   let [node, setNode] = useState<HTMLDivElement>();
@@ -27,14 +26,10 @@ export function Output() {
   useEffect(() => {
     if (!node) return;
 
-    if (config.theme === "custom" && !!config.customTheme) {
-      setTheme(config.customTheme, config.typeSize);
-    } else if (config.theme !== "custom") {
-      setTheme(DEFAULT_THEMES[config.theme], config.typeSize);
-    }
-
     let rehighlight = async () => {
-      let pre = await codeToHighlightedPre(config, appState);
+      let theme = await resolveTheme(config);
+      setTheme(theme);
+      let pre = await codeToHighlightedPre(theme, config, appState);
       setPreMeasure(measurePre(pre, node));
       setHtml(pre.innerHTML);
     };
@@ -42,14 +37,18 @@ export function Output() {
     window.addEventListener("resize", rehighlight);
     document.fonts.ready.then(rehighlight);
 
-    WebFont.load({
-      google: {
-        families: [`${config.font}:400,700`],
-      },
-      active: () => {
-        rehighlight();
-      },
-    });
+    if (!FONT_PROMISES[config.font]) {
+      FONT_PROMISES[config.font] = new Promise((resolve) => {
+        WebFont.load({
+          google: {
+            families: [`${config.font}:400,700,400italic,700italic`],
+          },
+          active: () => {
+            resolve();
+          },
+        });
+      });
+    }
 
     return () => {
       window.removeEventListener("resize", rehighlight);
@@ -87,13 +86,16 @@ export function Output() {
 
 let highlighterPromise: Promise<shiki.Highlighter>;
 
-async function codeToHighlightedPre(config: Config, appState: AppState) {
+async function codeToHighlightedPre(
+  theme: shiki.ThemeRegistration,
+  config: Config,
+  appState: AppState
+) {
   // build pre element
   let pre = document.createElement("pre");
   pre.style.fontFamily = config.font;
   pre.style.fontSize = `${config.typeSize}px`;
-  const lineHeight = resolveTheme(config).lineHeight || 1.5;
-  pre.style.lineHeight = `${lineHeight}`;
+  pre.style.lineHeight = "1.4";
   pre.style.backgroundColor = "transparent";
 
   let lang = config.lang || (/\s*</.test(config.code) ? "markup" : "js");
@@ -108,7 +110,6 @@ async function codeToHighlightedPre(config: Config, appState: AppState) {
   }
   let highlighter = await highlighterPromise;
 
-  let theme = legacyToShikiTheme(resolveTheme(config));
   try {
     if (!highlighter.getLoadedLanguages().includes(lang))
       await highlighter.loadLanguage(lang as shiki.BuiltinLanguage);
@@ -224,27 +225,16 @@ function measurePre(
 }
 
 function measureNaturalPreSize(pre: HTMLPreElement) {
-  // // compute the natural width of a monospace <pre> by computing
-  // // the length of its longest line
-  // let longestLine = (pre.textContent || "")
-  //   .split("\n")
-  //   .reduce(
-  //     (longest: string, line: string) =>
-  //       longest.length > line.length ? longest : line,
-  //     ""
-  //   );
-
   let preClone = pre.cloneNode(true) as HTMLPreElement;
   preClone.style.position = "fixed";
   preClone.style.left = "-10000px";
   preClone.style.top = "0";
   preClone.style.height = "auto";
   preClone.style.display = "inline-block";
-  // preClone.textContent = pre.textContent;
   document.body.appendChild(preClone);
 
   let width = preClone.offsetWidth;
   let height = preClone.offsetHeight;
-  // preClone.remove();
+  preClone.remove();
   return { width, height };
 }

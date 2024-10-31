@@ -9,6 +9,7 @@ export function legacyToShikiTheme(theme: LegacyTheme): shiki.ThemeRegistration 
     colors: {
       "editor.foreground": theme.textColor,
       "editor.background": theme.bgColor,
+      "__dimmedColor": theme.dimmedColor,
       "editor.selectionBackground": theme.highlightColor,
     },
     semanticHighlighting: true,

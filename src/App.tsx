@@ -1,18 +1,24 @@
-import cn from "classnames";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
+import { ThemeRegistration } from "shiki";
 import styles from "./App.module.scss";
 import { Editor } from "./components/Editor";
+import { MessageList } from "./components/MessageList";
 import { Output } from "./components/Output";
 import { InputToolbar } from "./components/toolbars/InputToolbar";
 import { OutputToolbar } from "./components/toolbars/OutputToolbar";
 import { WarningMessages } from "./components/WarningMessages";
 import { useConfig } from "./Config";
 import { resolveTheme } from "./themes";
-import { MessageList } from "./components/MessageList";
 
 function App() {
   let [config] = useConfig();
-  let currentTheme = useMemo(() => resolveTheme(config), [config]);
+  let [currentTheme, setCurrentTheme] = useState<ThemeRegistration>();
+  useEffect(() => {
+    (async () => {
+      let theme = await resolveTheme(config);
+      setCurrentTheme(theme);
+    })();
+  }, [config]);
 
   return (
     <>
@@ -34,7 +40,7 @@ function App() {
             },
             {
               type: "info",
-              message: `Set your background color to: ${currentTheme.bgColor}`,
+              message: `Set your background color to: ${currentTheme?.colors?.['editor.background']}`,
             },
           ]}
         />
