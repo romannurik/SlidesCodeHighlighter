@@ -1,15 +1,12 @@
 import cn from "classnames";
 import { useContext, useEffect, useState } from "react";
 import * as shiki from "shiki";
+import tinycolor from "tinycolor2";
 import WebFont from "webfontloader";
 import { AppState, AppStateContext } from "../AppState";
 import { cleanupCode } from "../cleanup-code";
 import { Config, useConfig } from "../Config";
-import {
-  GLOBAL_OUTPUT_CONTAINER_CLASS,
-  resolveTheme,
-  setTheme,
-} from "../themes";
+import { GLOBAL_OUTPUT_CONTAINER_CLASS, resolveTheme } from "../themes";
 import { htmlEscape } from "../util";
 import styles from "./Output.module.scss";
 
@@ -19,23 +16,23 @@ const FONT_PROMISES: Record<string, Promise<void>> = {};
 export function Output() {
   let [node, setNode] = useState<HTMLDivElement>();
   let [html, setHtml] = useState("");
+  let [bgColor, setBgColor] = useState("");
   let [preMeasure, setPreMeasure] = useState({ scale: 1, width: 0 });
   let [config] = useConfig();
   let appState = useContext(AppStateContext);
 
   useEffect(() => {
     if (!node) return;
+    let cancel = false;
 
     let rehighlight = async () => {
       let theme = await resolveTheme(config);
-      setTheme(theme);
       let pre = await codeToHighlightedPre(theme, config, appState);
+      if (cancel) return;
       setPreMeasure(measurePre(pre, node));
       setHtml(pre.innerHTML);
+      setBgColor(theme.colors?.["editor.background"] || "");
     };
-
-    window.addEventListener("resize", rehighlight);
-    document.fonts.ready.then(rehighlight);
 
     if (!FONT_PROMISES[config.font]) {
       FONT_PROMISES[config.font] = new Promise((resolve) => {
@@ -50,7 +47,12 @@ export function Output() {
       });
     }
 
+    FONT_PROMISES[config.font].then(rehighlight);
+    document.fonts.ready.then(rehighlight);
+    window.addEventListener("resize", rehighlight);
+
     return () => {
+      cancel = true;
       window.removeEventListener("resize", rehighlight);
     };
   }, [node, config, appState]);
@@ -60,6 +62,9 @@ export function Output() {
       className={cn(GLOBAL_OUTPUT_CONTAINER_CLASS, styles.output, {
         "has-highlights": appState.selections.length,
       })}
+      style={{
+        backgroundColor: bgColor,
+      }}
       ref={(node) => setNode(node || undefined)}
       data-seltreat={config.selectionTreatment || ""}
       onClick={(ev) => {
@@ -76,7 +81,8 @@ export function Output() {
           width: preMeasure.width,
           transform: `translate(-50%, -50%) scale(${preMeasure.scale})`,
           fontFamily: config.font,
-          fontSize: config.typeSize,
+          fontSize: `${config.typeSize}px`,
+          lineHeight: `${config.typeSize * 1.5}px`,
         }}
         dangerouslySetInnerHTML={{ __html: html }}
       />
@@ -95,7 +101,7 @@ async function codeToHighlightedPre(
   let pre = document.createElement("pre");
   pre.style.fontFamily = config.font;
   pre.style.fontSize = `${config.typeSize}px`;
-  pre.style.lineHeight = "1.4";
+  pre.style.lineHeight = `${config.typeSize * 1.5}px`;
   pre.style.backgroundColor = "transparent";
 
   let lang = config.lang || (/\s*</.test(config.code) ? "markup" : "js");
@@ -127,14 +133,29 @@ async function codeToHighlightedPre(
     })
     .replace(/<\/?(pre|code).*?>/g, "");
 
-  if (config.selectionTreatment) {
-    highlightSelection(pre, appState);
+  if (config.selectionTreatment && appState.selections.length) {
+    highlightSelection(pre, theme, config, appState);
   }
 
   return pre;
 }
 
-function highlightSelection(preRoot: HTMLPreElement, appState: AppState) {
+function highlightSelection(
+  preRoot: HTMLPreElement,
+  theme: shiki.ThemeRegistration,
+  config: Config,
+  appState: AppState
+) {
+  let colors = theme.colors || {};
+  let fg = colors["editor.foreground"] || colors["foreground"];
+  let bg = colors["editor.background"];
+  let dim = colors["__dimmedColor"] || tinycolor.mix(fg, bg, 75).toRgbString();
+  let hili =
+    colors["editor.selectionBackground"] ||
+    colors["editor.selectionHighlightBackground"] ||
+    tinycolor.mix(fg, bg, 75).toRgbString();
+  let selTreatment = config.selectionTreatment;
+
   for (let { start, end } of appState.selections) {
     let childStartPos = 0;
 
@@ -169,25 +190,35 @@ function highlightSelection(preRoot: HTMLPreElement, appState: AppState) {
             childContent.length - (childEndPos - end)
           );
 
-          let makeSub = (tag: "span" | "mark", start: number, end: number) => {
-            if (start == end) {
+          let respan = (mark: boolean, start: number, end: number) => {
+            if (start === end) {
               return null;
             }
 
-            let f = document.createElement(tag);
+            let f = document.createElement(
+              mark ? "mark" : "span"
+            ) as HTMLSpanElement;
             f.setAttribute(
               "style",
               childAttrs.style || inheritAttrs.style || ""
             );
+            switch (selTreatment) {
+              case "bold":
+                if (mark) f.style.fontWeight = "bold";
+                break;
+              case "highlight":
+                if (mark) f.style.backgroundColor = hili;
+                break;
+            }
             f.innerHTML = htmlEscape(childContent.substring(start, end));
             return f;
           };
 
           child.replaceWith(
             ...[
-              makeSub("span", 0, startInChild),
-              makeSub("mark", startInChild, endInChild),
-              makeSub("span", endInChild, childContent.length),
+              respan(false, 0, startInChild),
+              respan(true, startInChild, endInChild),
+              respan(false, endInChild, childContent.length),
             ].filter((s) => !!s)
           );
         }
@@ -197,6 +228,12 @@ function highlightSelection(preRoot: HTMLPreElement, appState: AppState) {
     };
 
     traverse_(preRoot, { style: "" });
+  }
+
+  if (selTreatment === "focus") {
+    preRoot
+      .querySelectorAll<HTMLSpanElement>("span:not(.line)")
+      .forEach((s) => (s.style.color = dim));
   }
 }
 

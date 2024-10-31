@@ -45,6 +45,7 @@ function MonacoEditor() {
       value: config.code,
       theme: "vs",
       fontSize: 14,
+      fontLigatures: true,
       padding: {
         top: 8,
       },

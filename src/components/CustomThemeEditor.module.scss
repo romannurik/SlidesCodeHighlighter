@@ -1,8 +1,9 @@
+@use '../lib' as lib;
+
 .customThemeArea {
   flex: 0 0 auto;
-  display: none;
 
-  @include mobile {
+  @include lib.mobile {
     flex: 1 0 0;
   }
 

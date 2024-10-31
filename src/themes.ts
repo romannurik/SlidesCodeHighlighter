@@ -2,7 +2,10 @@ import { bundledThemes, bundledThemesInfo, ThemeRegistration } from 'shiki';
 import { Config } from './Config';
 import { legacyToShikiTheme } from './legacy-to-shiki-theme';
 import { materialColor } from './material-colors';
-import tinycolor from 'tinycolor2';
+
+import idxDarkTheme from "./shiki-themes/monospace-dark.json";
+import idxLightTheme from "./shiki-themes/monospace-light.json";
+
 
 export interface LegacyTheme {
   legacy: true;
@@ -25,7 +28,7 @@ export const GLOBAL_OUTPUT_CONTAINER_CLASS = '__output-container';
 
 export const THEME_PROPERTIES: {
   short: string;
-  id: keyof LegacyTheme;
+  id: Exclude<keyof LegacyTheme, 'legacy'>;
   name: string;
   type: 'color' | 'number';
   hideEditor?: true;
@@ -33,7 +36,6 @@ export const THEME_PROPERTIES: {
     { short: 'b', id: 'bgColor', name: 'Background', type: 'color' },
     { short: 't', id: 'textColor', name: 'Plain text', type: 'color' },
     { short: 'p', id: 'punctuationColor', name: 'Punctuation', type: 'color' },
-    { short: 'o', id: 'operatorColor', name: 'Operators', type: 'color' },
     { short: 's', id: 'stringAndValueColor', name: 'Strings, values', type: 'color' },
     { short: 'k', id: 'keywordTagColor', name: 'Keywords, tags', type: 'color' },
     { short: 'c', id: 'commentColor', name: 'Comments', type: 'color' },
@@ -51,46 +53,11 @@ export async function resolveTheme(context: Config): Promise<ThemeRegistration> 
     return legacyToShikiTheme(DEFAULT_LEGACY_THEMES[context.theme as keyof typeof DEFAULT_LEGACY_THEMES]);
   } else if (context.theme in bundledThemes) {
     return (await bundledThemes[context.theme as keyof typeof bundledThemes]()).default;
+  } else if (context.theme in CUSTOM_SHIKI_THEMES) {
+    return CUSTOM_SHIKI_THEMES[context.theme as keyof typeof CUSTOM_SHIKI_THEMES];
   }
 
   return legacyToShikiTheme(DEFAULT_LEGACY_THEMES.light);
-}
-
-export function setTheme(theme: ThemeRegistration) {
-  let colors = theme.colors || {};
-
-  let fg = colors['editor.foreground'] || colors['foreground'];
-  let bg = colors['editor.background'];
-
-  const ROOT = `.${GLOBAL_OUTPUT_CONTAINER_CLASS}`;
-  let css = `
-    ${ROOT} pre,
-    ${ROOT} pre mark {
-      color: ${fg};
-    }
-    ${ROOT}.has-highlights[data-seltreat="focus"] pre > :not(mark),
-    ${ROOT}.has-highlights[data-seltreat="focus"] pre :not(mark),
-    ${ROOT}.has-highlights[data-seltreat="focus"] pre {
-      color: ${colors['__dimmedColor'] || tinycolor.mix(fg, bg, 75).toRgbString()
-    } !important;
-    }
-    ${ROOT}.has-highlights[data-seltreat="highlight"] pre mark {
-      background-color: ${colors['editor.selectionBackground'] || 'yellow'};
-    }
-    ${ROOT}::after {
-      /* to avoid background color being copied to clipboard */
-      background-color: ${bg};
-    }
-  `;
-
-  let style = document.querySelector('style[theme-rules]') as HTMLStyleElement | null;
-  if (!style) {
-    style = document.createElement('style');
-    style.setAttribute('theme-rules', 'true');
-    document.body.appendChild(style);
-  }
-
-  style.textContent = css;
 }
 
 export const DEFAULT_LEGACY_THEMES = {
@@ -264,9 +231,15 @@ export const DEFAULT_LEGACY_THEMES = {
   },
 } as const satisfies Record<string, LegacyTheme>;
 
+export const CUSTOM_SHIKI_THEMES = {
+  'idx-dark': idxDarkTheme,
+  'idx-light': idxLightTheme,
+};
+
 export const DEFAULT_THEME_NAMES: Record<string, string> = Object.fromEntries([
   ...Object.entries(DEFAULT_LEGACY_THEMES).map(([id, { name }]) => [id, name]),
   ...bundledThemesInfo.map((info) => [info.id, info.displayName]),
+  ...Object.entries(CUSTOM_SHIKI_THEMES).map(([id, { name }]) => [id, name]),
 ]);
 
 export type ThemeName = keyof typeof DEFAULT_LEGACY_THEMES | keyof typeof bundledThemes | 'custom';

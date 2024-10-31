@@ -9,6 +9,7 @@ import { OutputToolbar } from "./components/toolbars/OutputToolbar";
 import { WarningMessages } from "./components/WarningMessages";
 import { useConfig } from "./Config";
 import { resolveTheme } from "./themes";
+import { CustomThemeEditor } from "./components/CustomThemeEditor";
 
 function App() {
   let [config] = useConfig();
@@ -45,7 +46,7 @@ function App() {
           ]}
         />
       </div>
-      {/* <CustomThemeEditor /> */}
+      <CustomThemeEditor className={styles.customThemeArea} />
     </>
   );
 }
