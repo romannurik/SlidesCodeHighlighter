@@ -21,5 +21,5 @@ If you want to contribute, you can build and serve the web app locally as follow
   4. To build and serve the web app locally, run:
 
      ```
-     $ npm run start
+     $ npm run dev
      ```
