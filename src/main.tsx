@@ -21,16 +21,16 @@ import { ConfigWrapper } from "./Config.tsx";
 import "./index.scss";
 import { AppStateWrapper } from "./AppState.tsx";
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js', {
-    scope: '/'
-  }).then((register) => {
-    console.log('service worker registered', register)
-  })
-  .catch((err) => {
-    console.log('service worker not registered', err)
-  })
-}
+window.addEventListener('load', async () => {
+  try{
+    if(navigator.serviceWorker){
+      await navigator.serviceWorker.register('/sw.js')
+    }
+  }
+  catch(err){
+    // log error
+  }
+})
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
