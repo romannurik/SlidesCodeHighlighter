@@ -21,17 +21,6 @@ import { ConfigWrapper } from "./Config.tsx";
 import "./index.scss";
 import { AppStateWrapper } from "./AppState.tsx";
 
-window.addEventListener('load', async () => {
-  try{
-    if(navigator.serviceWorker){
-      await navigator.serviceWorker.register('/sw.js')
-    }
-  }
-  catch(err){
-    // log error
-  }
-})
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ConfigWrapper>
