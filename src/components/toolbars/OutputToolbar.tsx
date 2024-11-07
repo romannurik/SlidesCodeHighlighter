@@ -31,6 +31,7 @@ const FONTS = [
   "Fira Code",
   "Fira Mono",
   "Fragment Mono",
+  "Geist Mono",
   "IBM Plex Mono",
   "Inconsolata",
   "JetBrains Mono",
