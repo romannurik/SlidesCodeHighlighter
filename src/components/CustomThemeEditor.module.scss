@@ -80,3 +80,14 @@
     }
   }
 }
+
+.customThemeEditorEmpty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  place-content: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 200px;
+  color: rgba(#000, .7);
+}

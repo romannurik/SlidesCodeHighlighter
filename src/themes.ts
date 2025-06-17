@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as shiki from 'shiki';
 import { bundledThemes, bundledThemesInfo, ThemeRegistration } from 'shiki';
 import { Config } from './Config';
 import { legacyToShikiTheme } from './legacy-to-shiki-theme';
@@ -40,6 +41,8 @@ export interface LegacyTheme {
   operatorColor?: string;
 }
 
+export type VscTheme = shiki.ThemeRegistration;
+
 export const GLOBAL_OUTPUT_CONTAINER_CLASS = '__output-container';
 
 export const THEME_PROPERTIES: {
@@ -64,7 +67,9 @@ export const THEME_PROPERTIES: {
 
 export async function resolveTheme(context: Config): Promise<ThemeRegistration> {
   if (context.theme === "custom") {
-    return legacyToShikiTheme(context.customTheme ?? DEFAULT_LEGACY_THEMES.light);
+    return isVscTheme(context.customTheme)
+      ? prepVscTheme(context.customTheme)
+      : legacyToShikiTheme(context.customTheme ?? DEFAULT_LEGACY_THEMES.light);
   } else if (context.theme in DEFAULT_LEGACY_THEMES) {
     return legacyToShikiTheme(DEFAULT_LEGACY_THEMES[context.theme as keyof typeof DEFAULT_LEGACY_THEMES]);
   } else if (context.theme in bundledThemes) {
@@ -74,6 +79,17 @@ export async function resolveTheme(context: Config): Promise<ThemeRegistration> 
   }
 
   return legacyToShikiTheme(DEFAULT_LEGACY_THEMES.light);
+}
+
+function prepVscTheme(theme: VscTheme): VscTheme {
+  return {
+    ...theme,
+    name: String(Math.floor(999999999 * Math.random()))
+  };
+}
+
+export function isVscTheme(theme: any): theme is VscTheme {
+  return theme && typeof theme === 'object' && 'tokenColors' in theme;
 }
 
 export const DEFAULT_LEGACY_THEMES = {
@@ -258,4 +274,7 @@ export const DEFAULT_THEME_NAMES: Record<string, string> = Object.fromEntries([
   ...Object.entries(CUSTOM_SHIKI_THEMES).map(([id, { name }]) => [id, name]),
 ]);
 
-export type ThemeName = keyof typeof DEFAULT_LEGACY_THEMES | keyof typeof bundledThemes | 'custom';
+export type ThemeName =
+  | keyof typeof DEFAULT_LEGACY_THEMES
+  | keyof typeof bundledThemes
+  | 'custom';

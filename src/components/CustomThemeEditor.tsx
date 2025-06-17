@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-import { useConfig } from "../Config";
 import cn from "classnames";
+import { useState } from "react";
+import { useConfig } from "../Config";
 import {
   DEFAULT_LEGACY_THEMES,
+  isVscTheme,
   LegacyTheme,
-  THEME_PROPERTIES,
+  THEME_PROPERTIES
 } from "../themes";
 import styles from "./CustomThemeEditor.module.scss";
+import { CustomThemeImportExport } from "./CustomThemeImportExport";
 import { CustomToolbar } from "./toolbars/CustomToolbar";
 
 export function CustomThemeEditor({ className }: { className?: string }) {
   let [config, updateConfig] = useConfig();
+  let [customThemeImportExportOpen, setCustomThemeImportExportOpen] = useState(false);
 
+  let vsc = isVscTheme(config.customTheme || {});
   let customTheme: LegacyTheme = {
     ...DEFAULT_LEGACY_THEMES.light,
     ...(config.customTheme || {}),
@@ -38,30 +43,14 @@ export function CustomThemeEditor({ className }: { className?: string }) {
 
   return (
     <div className={cn(className, styles.customThemeArea)}>
+      {customThemeImportExportOpen &&
+        <CustomThemeImportExport
+          open
+          onClose={() => setCustomThemeImportExportOpen(false)} />}
+
       <CustomToolbar heading="Custom theme">
         <button
-          onClick={() => {
-            let theme: Partial<LegacyTheme> = config.customTheme || {};
-            delete theme['legacy'];
-            delete theme['name'];
-            let currentJSON = JSON.stringify(config.customTheme);
-            let newJSON = window.prompt(
-              "Copy the below JSON or paste new JSON for your custom theme.",
-              currentJSON
-            );
-            if (newJSON && newJSON != currentJSON) {
-              try {
-                updateConfig({
-                  customTheme: {
-                    ...DEFAULT_LEGACY_THEMES.light,
-                    ...(JSON.parse(newJSON) || {}),
-                  },
-                });
-              } catch (e) {
-                alert("Error parsing the JSON: " + e);
-              }
-            }
-          }}
+          onClick={() => setCustomThemeImportExportOpen(true)}
         >
           Import/export
         </button>
@@ -74,7 +63,10 @@ export function CustomThemeEditor({ className }: { className?: string }) {
         </button>
       </CustomToolbar>
       <div className={styles.customThemeEditor}>
-        {THEME_PROPERTIES.map((prop) => {
+        {vsc && <div className={styles.customThemeEditorEmpty}>
+          Your custom theme is a full VSCode theme, which isn't editable in this view
+        </div>}
+        {!vsc && THEME_PROPERTIES.map((prop) => {
           let hexColor = String(
             customTheme[prop.id] || "#000000"
           ).toUpperCase();

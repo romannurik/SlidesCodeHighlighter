@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import JSON5 from 'json5';
 import {
   createContext,
   PropsWithChildren,
@@ -22,7 +23,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { LegacyTheme, THEME_PROPERTIES, ThemeName } from "./themes";
+import { isVscTheme, LegacyTheme, THEME_PROPERTIES, ThemeName, VscTheme } from "./themes";
 
 export interface Config {
   code: string;
@@ -32,7 +33,7 @@ export interface Config {
   theme: ThemeName;
   selectionTreatment: "none" | "focus" | "bold" | "highlight";
   lang?: string;
-  customTheme?: LegacyTheme;
+  customTheme?: LegacyTheme | VscTheme;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -80,11 +81,13 @@ export function useConfig(): [Config, (updates: Partial<Config>) => void] {
         // p.set('lang', config.lang);
         if (newConfig.theme === "custom" && newConfig.customTheme) {
           p.set("theme", "custom");
-          for (let [k, v] of Object.entries(newConfig.customTheme)) {
-            let prop = THEME_PROPERTIES.find((s) => s.id === k);
-            if (!prop) continue;
-            const { type, short } = prop;
-            p.set(`t.${short}`, type === "color" ? v.replace(/^#/, "") : v);
+          if (!isVscTheme(newConfig.customTheme)) {
+            for (let [k, v] of Object.entries(newConfig.customTheme)) {
+              let prop = THEME_PROPERTIES.find((s) => s.id === k);
+              if (!prop) continue;
+              const { type, short } = prop;
+              p.set(`t.${short}`, type === "color" ? v.replace(/^#/, "") : v);
+            }
           }
         } else {
           p.set("theme", newConfig.theme);
@@ -128,11 +131,10 @@ export function ConfigWrapper({ children }: PropsWithChildren) {
       config.selectionTreatment = localStorage.highlighterSelectionTreatment;
     try {
       if (localStorage.customTheme)
-        config.customTheme = JSON.parse(localStorage.customTheme);
+        config.customTheme = JSON5.parse(localStorage.customTheme);
     } catch (e) {
       // pass
     }
-
     if (window.location.search) {
       let p = Object.fromEntries(
         new URLSearchParams(window.location.search).entries()
@@ -143,15 +145,18 @@ export function ConfigWrapper({ children }: PropsWithChildren) {
         if (theme === "custom") {
           config.theme = "custom";
           let customTheme: Record<string, string | undefined> = {};
-          for (let k of [...Object.keys(p)].filter((k) => k.startsWith("t."))) {
-            let prop = THEME_PROPERTIES.find(
-              (s) => s.short === k.replace(/^t\./, "")
-            );
-            if (!prop) continue;
-            let { type, id } = prop;
-            customTheme[id] = type === "color" ? "#" + p[k] : p[k];
+          let customThemeProps = [...Object.keys(p)].filter((k) => k.startsWith("t."));
+          if (customThemeProps.length) { // if there are no custom theme props, it's a VSC theme, not in the querystring
+            for (let k of customThemeProps) {
+              let prop = THEME_PROPERTIES.find(
+                (s) => s.short === k.replace(/^t\./, "")
+              );
+              if (!prop) continue;
+              let { type, id } = prop;
+              customTheme[id] = type === "color" ? "#" + p[k] : p[k];
+            }
+            config.customTheme = customTheme as unknown as LegacyTheme;
           }
-          config.customTheme = customTheme as unknown as LegacyTheme;
         }
       }
       if (p["font"]) config.font = p["font"];

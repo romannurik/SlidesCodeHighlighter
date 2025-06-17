@@ -99,26 +99,7 @@
   }
 
   button {
-    appearance: none;
-    border: 0;
-    background-color: lib.material-color('blue-grey', '600');
-    color: #fff;
-    font-family: Roboto;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover,
-    &:focus {
-      background-color: lib.material-color('blue-grey', '500');
-    }
-
-    &:active {
-      background-color: lib.material-color('blue-grey', '400');
-    }
+    @include lib.button;
   }
 
   .selectWrapper,

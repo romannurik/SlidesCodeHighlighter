@@ -15,9 +15,46 @@
  */
 
 @forward "./material-colors.scss";
+@use "./material-colors.scss" as lib;
 
 @mixin mobile {
   @media only screen and (max-width: 500px) {
     @content;
+  }
+}
+
+@mixin button($type: primary) {
+  @if $type == primary {
+    --button-bg-color: #{lib.material-color('blue-grey', '600')};
+    --button-fg-color: #fff;
+  } @else {
+    --button-bg-color: #{lib.material-color('blue-grey', '100')};
+    --button-fg-color: #{lib.material-color('blue-grey', '800')};
+  }
+  appearance: none;
+  border: 0;
+  background-color: var(--button-bg-color);
+  color: var(--button-fg-color);
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &[disabled] {
+    cursor: not-allowed;
+    --button-bg-color: #{lib.material-color('grey', '100')};
+    --button-fg-color: #{lib.material-color('grey', '400')};
+  }
+
+  &:hover:not([disabled]),
+  &:focus:not([disabled]) {
+    background-color: color-mix(in srgb, var(--button-bg-color), var(--button-fg-color) 10%);
+  }
+
+  &:active:not([disabled]) {
+    background-color: color-mix(in srgb, var(--button-bg-color), var(--button-fg-color) 20%);
   }
 }
