@@ -30,7 +30,7 @@ export function InputToolbar() {
           <span>Language</span>
           <div className={styles.inputDatalistWrapper}>
             <select
-              style={{ minWidth: 150 }}
+              style={{ width: 170 }}
               name="lang"
               className={cn({
                 [styles.isInvalid]:
@@ -57,7 +57,7 @@ export function InputToolbar() {
           <div className={styles.selectWrapper}>
             <select
               id="tab-size"
-              style={{ minWidth: 80 }}
+              style={{ width: 80 }}
               value={config.tabSize}
               onInput={(ev) =>
                 updateConfig({ tabSize: Number(ev.currentTarget.value) })

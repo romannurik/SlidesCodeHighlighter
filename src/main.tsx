@@ -21,6 +21,10 @@ import { ConfigWrapper } from "./Config.tsx";
 import "./index.scss";
 import { AppStateWrapper } from "./AppState.tsx";
 
+self.MonacoEnvironment = {
+  getWorker: () => new Worker(new URL('./dummy.worker.js', import.meta.url)),
+};
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ConfigWrapper>

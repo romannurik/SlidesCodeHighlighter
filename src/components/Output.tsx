@@ -73,8 +73,21 @@ export function Output() {
     };
   }, [node, config, appState]);
 
+  useEffect(() => {
+    if (!node) return;
+    let rehighlight = async () => {
+      let theme = await resolveTheme(config);
+      let pre = await codeToHighlightedPre(theme, config, appState);
+      setPreMeasure(measurePre(pre, node));
+      setHtml(pre.innerHTML);
+      setBgColor(theme.colors?.["editor.background"] || "");
+    };
+    rehighlight();
+  }, [config.theme, node, config, appState]);
+
   return (
     <div
+      id="output-container"
       className={cn(GLOBAL_OUTPUT_CONTAINER_CLASS, styles.output, {
         "has-highlights": appState.selections.length,
       })}
@@ -126,8 +139,13 @@ async function codeToHighlightedPre(
 
   if (!highlighterPromise) {
     highlighterPromise = shiki.createHighlighter({
-      themes: [],
-      langs: [],
+      themes: [
+        (await import("../shiki-themes/monospace-dark.json")).default,
+        (await import("../shiki-themes/monospace-light.json")).default,
+      ],
+      langs: [
+        'javascript', 'typescript', 'jsx', 'tsx', 'json', 'css', 'html', 'scss', 'python', 'java', 'csharp', 'go', 'rust', 'cpp', 'clojure'
+      ],
     });
   }
   let highlighter = await highlighterPromise;

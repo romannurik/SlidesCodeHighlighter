@@ -21,15 +21,21 @@
   flex-direction: column;
   padding: 4px;
   gap: 4px;
+  padding: 0;
 }
 
 .message {
-  padding: 4px 8px;
-  font-size: 14px;
-  line-height: 20px;
+  padding: 2px 4px;
+  font-size: 12px;
+  line-height: 14px;
   border-radius: 4px;
   background-color: lib.material-color('blue-grey', '600');
   color: #fff;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
 
   &[data-type="warning"] {
     background-color: lib.material-color('red', 'a400');

@@ -27,6 +27,8 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.329",
+    "@types/node": "^24.0.10",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/tinycolor2": "^1.4.6",
@@ -40,6 +42,8 @@
     "sass": "^1.80.5",
     "typescript": "^5.0.2",
     "vite": "^5.4.10",
-    "vite-plugin-pwa": "^0.20.5"
+    "vite-plugin-monaco-editor": "^1.1.0",
+    "vite-plugin-pwa": "^0.20.5",
+    "vite-plugin-static-copy": "^3.1.0"
   }
 }

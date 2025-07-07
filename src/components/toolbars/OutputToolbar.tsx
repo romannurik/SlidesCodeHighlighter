@@ -77,6 +77,7 @@ export function OutputToolbar() {
           <div className={styles.selectWrapper}>
             <select
               id="theme"
+              style={{ width: 120 }}
               value={config.theme}
               onInput={(ev) =>
                 updateConfig({
@@ -121,6 +122,7 @@ export function OutputToolbar() {
           <div className={styles.selectWrapper}>
             <select
               id="font"
+              style={{ width: 80 }}
               value={config.font}
               onInput={(ev) =>
                 updateConfig({
@@ -140,7 +142,7 @@ export function OutputToolbar() {
         <label>
           <span>Type size</span>
           <input
-            style={{ width: 60 }}
+            style={{ width: 50 }}
             type="text"
             id="type-size"
             value={typeSize ?? config.typeSize}
@@ -185,6 +187,7 @@ export function OutputToolbar() {
             </select>
           </div>
         </label>
+
       </div>
     </>
   );

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { ThemeRegistration } from "shiki";
 import styles from "./App.module.scss";
-import { Editor } from "./components/Editor";
 import { MessageList } from "./components/MessageList";
-import { Output } from "./components/Output";
 import { InputToolbar } from "./components/toolbars/InputToolbar";
 import { OutputToolbar } from "./components/toolbars/OutputToolbar";
 import { WarningMessages } from "./components/WarningMessages";
 import { useConfig } from "./Config";
 import { resolveTheme } from "./themes";
 import { CustomThemeEditor } from "./components/CustomThemeEditor";
+
+const Editor = lazy(() => import("./components/Editor").then(m => ({ default: m.Editor })));
+const Output = lazy(() => import("./components/Output").then(m => ({ default: m.Output })));
 
 function App() {
   let [config] = useConfig();
@@ -41,23 +42,22 @@ function App() {
     <>
       <div className={styles.editArea}>
         <InputToolbar />
-        <Editor />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Editor />
+        </Suspense>
         <WarningMessages />
       </div>
       <div className={styles.outputArea}>
         <OutputToolbar />
-        <Output />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Output />
+        </Suspense>
         <MessageList
           className={styles.messages}
           messages={[
             {
               type: "info",
-              message:
-                "For best results, copy from Safari with Keynote decks and from Chrome with Google Slides decks.",
-            },
-            {
-              type: "info",
-              message: `Set your background color to: ${currentTheme?.colors?.['editor.background']}`,
+              message: `Background color: ${currentTheme?.colors?.['editor.background']}`,
             },
           ]}
         />

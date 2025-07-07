@@ -57,18 +57,39 @@ function MonacoEditor() {
       minimap: {
         enabled: false,
       },
-      language: "plaintext",
+      language: config.lang || "plaintext",
       value: config.code,
       theme: "vs",
-      fontSize: 14,
+      fontSize: 12,
       fontLigatures: true,
       padding: {
-        top: 8,
+        top: 4,
       },
       fontFamily: '"Roboto Mono"',
     });
     editor.onDidChangeModelContent(() => {
       updateConfig({ code: editor.getValue() });
+    });
+    editor.onDidPaste(() => {
+      setTimeout(() => {
+        const outputElement = document.getElementById("output-container");
+        if (outputElement) {
+          const pre = outputElement.querySelector("pre");
+          if (pre) {
+            const html = pre.innerHTML;
+            const bgColor = (outputElement as HTMLElement).style.backgroundColor;
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+              if (tabs[0] && tabs[0].id) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                  action: "highlight",
+                  html,
+                  bgColor,
+                });
+              }
+            });
+          }
+        }
+      }, 100);
     });
     setEditor(editor);
 
@@ -93,7 +114,8 @@ function MonacoEditor() {
       tabSize: config.tabSize,
       detectIndentation: false,
     });
-  }, [editor, config.tabSize, config.font]);
+    monaco.editor.setModelLanguage(editor.getModel()!, config.lang || "plaintext");
+  }, [editor, config.lang, config.tabSize, config.font]);
 
   useEffect(() => {
     if (!editor) return;
