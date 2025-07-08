@@ -57,7 +57,7 @@ export function InputToolbar() {
           <div className={styles.selectWrapper}>
             <select
               id="tab-size"
-              style={{ width: 80 }}
+              style={{ minWidth: 80 }}
               value={config.tabSize}
               onInput={(ev) =>
                 updateConfig({ tabSize: Number(ev.currentTarget.value) })

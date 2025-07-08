@@ -57,6 +57,7 @@ function MonacoEditor() {
       minimap: {
         enabled: false,
       },
+      lineNumbers: "off",
       language: config.lang || "plaintext",
       value: config.code,
       theme: "vs",
