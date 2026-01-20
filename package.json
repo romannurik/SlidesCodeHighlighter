@@ -22,7 +22,7 @@
     "monaco-editor": "^0.50.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "shiki": "^1.22.2",
+    "shiki": "^3.21.0",
     "tinycolor2": "^1.6.0",
     "webfontloader": "^1.6.28"
   },
